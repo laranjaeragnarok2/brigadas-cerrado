@@ -17,13 +17,24 @@ export default function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
 
-  // Relatos da Comunidade (Mapeamento em Tempo Real)
+  // Controle de Confirmações Únicas por Usuário (Impede joinhas infinitos)
+  const [confirmedReportIds, setConfirmedReportIds] = useState(() => {
+    try {
+      const saved = localStorage.getItem('cerrado_confirmed_reports');
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) {
+      return [];
+    }
+  });
+
+  // Relatos da Comunidade (Mapeamento Waze Cerrado)
   const [communityReports, setCommunityReports] = useState([
     {
       id: 'rep_1',
       type: 'danger',
       title: 'Fogo Ativo em Encosta de Serra',
       location: 'Alto Paraíso de Goiás (GO-237 km 14)',
+      coords: '-14.1311, -47.5218',
       description: 'Chamas avançando rápido na vegetação baixa da serra. Tropa de solo acionada.',
       confirmations: 6,
       time: 'Há 12 minutos (Verificado por Satélite + 6 Moradores)'
@@ -33,6 +44,7 @@ export default function App() {
       type: 'warning',
       title: 'Coluna de Fumaça Espessa',
       location: 'Cavalcante - Limite Quilombo Kalunga',
+      coords: '-13.7964, -47.4583',
       description: 'Fumaça branca densa subindo do vale. Equipe Kalunga em checagem.',
       confirmations: 4,
       time: 'Há 45 minutos (Em checagem pela Brigada Kalunga)'
@@ -67,13 +79,37 @@ export default function App() {
     setCommunityReports(prev => [newReport, ...prev]);
   };
 
+  // Trava de Voto Único: Adiciona ou remove o voto sem permitir spam infinito
   const handleConfirmReport = (reportId) => {
-    setCommunityReports(prev => prev.map(rep => {
-      if (rep.id === reportId) {
-        return { ...rep, confirmations: rep.confirmations + 1 };
-      }
-      return rep;
-    }));
+    const isAlreadyConfirmed = confirmedReportIds.includes(reportId);
+
+    let updatedConfirmedIds;
+    if (isAlreadyConfirmed) {
+      // Remove o voto (decrementa)
+      updatedConfirmedIds = confirmedReportIds.filter(id => id !== reportId);
+      setCommunityReports(prev => prev.map(rep => {
+        if (rep.id === reportId) {
+          return { ...rep, confirmations: Math.max(0, rep.confirmations - 1) };
+        }
+        return rep;
+      }));
+    } else {
+      // Adiciona o voto único (incrementa +1)
+      updatedConfirmedIds = [...confirmedReportIds, reportId];
+      setCommunityReports(prev => prev.map(rep => {
+        if (rep.id === reportId) {
+          return { ...rep, confirmations: rep.confirmations + 1 };
+        }
+        return rep;
+      }));
+    }
+
+    setConfirmedReportIds(updatedConfirmedIds);
+    try {
+      localStorage.setItem('cerrado_confirmed_reports', JSON.stringify(updatedConfirmedIds));
+    } catch (e) {
+      console.warn("Não foi possível salvar no localStorage:", e);
+    }
   };
 
   // Renderiza a visualização por rota
@@ -96,6 +132,7 @@ export default function App() {
             onOpenReportModal={() => setIsReportModalOpen(true)}
             communityReports={communityReports}
             onConfirmReport={handleConfirmReport}
+            confirmedReportIds={confirmedReportIds}
           />
         );
     }

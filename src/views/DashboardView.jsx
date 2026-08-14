@@ -1,9 +1,10 @@
 import React from 'react';
 import { estatisticasGlobais, brigadasMock } from '../data/mockData';
 import BrigadeCard from '../components/BrigadeCard';
-import { Flame, ShieldAlert, HeartHandshake, Trees, Users, ArrowRight, ShieldCheck, Navigation, ThumbsUp, Radio, Camera } from 'lucide-react';
+import InteractiveMap from '../components/InteractiveMap';
+import { Flame, ShieldAlert, HeartHandshake, Trees, Users, ArrowRight, ShieldCheck, Navigation, ThumbsUp, Radio, Check } from 'lucide-react';
 
-export default function DashboardView({ onNavigate, onApoiar, onOpenReportModal, communityReports, onConfirmReport }) {
+export default function DashboardView({ onNavigate, onApoiar, onOpenReportModal, communityReports, onConfirmReport, confirmedReportIds = [] }) {
   const brigadasUrgentes = brigadasMock.filter(b => b.status_cor === 'danger' || b.status_cor === 'warning');
 
   return (
@@ -21,13 +22,13 @@ export default function DashboardView({ onNavigate, onApoiar, onOpenReportModal,
         </div>
       </div>
 
-      {/* Ticker de Avisos em Tempo Real (Estilo Waze do Cerrado) */}
+      {/* Seção Waze do Cerrado com Mapa Interativo */}
       <div className="section-card" style={{ borderLeftColor: '#A66844', background: '#F9F4EE', marginBottom: '24px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Radio size={20} color="#A66844" className="spin" />
             <h3 style={{ fontSize: '1.1rem', color: '#593122', margin: 0 }}>
-              Relatos da Comunidade (Waze do Cerrado)
+              Mapa e Relatos da Comunidade (Waze do Cerrado)
             </h3>
           </div>
           <button
@@ -51,63 +52,85 @@ export default function DashboardView({ onNavigate, onApoiar, onOpenReportModal,
           </button>
         </div>
 
+        {/* Mapa Interativo OpenStreetMap */}
+        <div style={{ marginBottom: '16px' }}>
+          <InteractiveMap reports={communityReports} />
+        </div>
+
+        {/* Ticker de Relatos com Validação Única por Usuário */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {communityReports && communityReports.length > 0 ? (
-            communityReports.map((rep) => (
-              <div 
-                key={rep.id} 
-                style={{
-                  background: '#FFF',
-                  padding: '14px',
-                  borderRadius: 'var(--md-shape-corner-medium)',
-                  border: '1px solid #E5DDD3',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '10px'
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                      <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#261914' }}>{rep.title}</span>
-                      <span style={{ fontSize: '0.72rem', background: '#F0EAE1', color: '#593122', padding: '2px 8px', borderRadius: '4px', fontWeight: 700 }}>
-                        📍 {rep.location}
-                      </span>
+            communityReports.map((rep) => {
+              const isAlreadyConfirmed = confirmedReportIds.includes(rep.id);
+
+              return (
+                <div 
+                  key={rep.id} 
+                  style={{
+                    background: '#FFF',
+                    padding: '14px',
+                    borderRadius: 'var(--md-shape-corner-medium)',
+                    border: '1px solid #E5DDD3',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '10px'
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                        <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#261914' }}>{rep.title}</span>
+                        <span style={{ fontSize: '0.72rem', background: '#F0EAE1', color: '#593122', padding: '2px 8px', borderRadius: '4px', fontWeight: 700 }}>
+                          📍 {rep.location}
+                        </span>
+                      </div>
+                      <div style={{ fontSize: '0.82rem', color: '#6B4D3E' }}>
+                        {rep.description || "Alerta reportado por moradores."} • <span style={{ color: '#A66844', fontWeight: 700 }}>{rep.time}</span>
+                      </div>
                     </div>
-                    <div style={{ fontSize: '0.82rem', color: '#6B4D3E' }}>
-                      {rep.description || "Alerta reportado por moradores."} • <span style={{ color: '#A66844', fontWeight: 700 }}>{rep.time}</span>
-                    </div>
+
+                    {/* Botão de Confirmação Única (Impede votos infinitos) */}
+                    <button
+                      onClick={() => onConfirmReport(rep.id)}
+                      style={{
+                        background: isAlreadyConfirmed ? '#EDF3EF' : '#F5EFE8',
+                        color: isAlreadyConfirmed ? '#2D6A4F' : '#593122',
+                        border: isAlreadyConfirmed ? '1px solid #C7E9D1' : '1px solid #D4C7B8',
+                        padding: '6px 14px',
+                        borderRadius: 'var(--md-shape-corner-small)',
+                        fontSize: '0.8rem',
+                        fontWeight: 700,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease'
+                      }}
+                      title={isAlreadyConfirmed ? 'Você já confirmou este aviso (Clique para remover)' : 'Confirmar que este aviso é real'}
+                    >
+                      {isAlreadyConfirmed ? (
+                        <>
+                          <Check size={14} color="#2D6A4F" />
+                          Você confirmou ({rep.confirmations})
+                        </>
+                      ) : (
+                        <>
+                          <ThumbsUp size={14} color="#A66844" />
+                          Confirmado por moradores ({rep.confirmations})
+                        </>
+                      )}
+                    </button>
                   </div>
 
-                  <button
-                    onClick={() => onConfirmReport(rep.id)}
-                    style={{
-                      background: '#F5EFE8',
-                      color: '#593122',
-                      border: '1px solid #D4C7B8',
-                      padding: '6px 12px',
-                      borderRadius: 'var(--md-shape-corner-small)',
-                      fontSize: '0.8rem',
-                      fontWeight: 700,
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '6px',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    <ThumbsUp size={14} color="#A66844" />
-                    Confirmado por moradores ({rep.confirmations})
-                  </button>
+                  {/* Foto da ocorrência */}
+                  {rep.photo && (
+                    <div style={{ marginTop: '4px', borderRadius: 'var(--md-shape-corner-small)', overflow: 'hidden', border: '1px solid #E5DDD3' }}>
+                      <img src={rep.photo} alt="Foto da ocorrência" style={{ width: '100%', maxHeight: '220px', objectFit: 'cover', display: 'block' }} />
+                    </div>
+                  )}
                 </div>
-
-                {/* Exibição de foto anexada no relato */}
-                {rep.photo && (
-                  <div style={{ marginTop: '4px', borderRadius: 'var(--md-shape-corner-small)', overflow: 'hidden', border: '1px solid #E5DDD3' }}>
-                    <img src={rep.photo} alt="Foto da ocorrência" style={{ width: '100%', maxHeight: '220px', objectFit: 'cover', display: 'block' }} />
-                  </div>
-                )}
-              </div>
-            ))
+              );
+            })
           ) : (
             <p style={{ fontSize: '0.85rem', color: '#6B4D3E' }}>Nenhum relato de fumaça reportado no momento.</p>
           )}
