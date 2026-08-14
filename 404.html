@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="./flame-icon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#D35400" />
+    <title>Brigadas do Cerrado Vivo | Apoio Direto às Brigadas Voluntárias</title>
+    
+    <!-- SEO & Open Graph Meta Tags -->
+    <meta name="description" content="Plataforma de apoio emergencial e voluntariado para as brigadas comunitárias e voluntárias de combate a incêndios no bioma Cerrado." />
+    <meta property="og:title" content="Brigadas do Cerrado Vivo - Apoie quem protege a nossa terra" />
+    <meta property="og:description" content="Doe equipamentos, voluntarie-se remotamente e acesse telefones de emergência offline para combate aos incêndios no Cerrado." />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=1200&q=80" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Google Fonts: Inter & Roboto -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="./manifest.json" />
+    <script type="module" crossorigin src="./assets/index-CsgsAJd2.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-DUougNls.css">
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+      // Service Worker Registration for Offline Emergency Page Support
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').then(
+            (registration) => console.log('SW registrado com sucesso:', registration.scope),
+            (err) => console.log('Falha ao registrar SW:', err)
+          );
+        });
+      }
+    </script>
+  </body>
+</html>

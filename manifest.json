@@ -1,0 +1,17 @@
+{
+  "short_name": "CerradoVivo",
+  "name": "Brigadas do Cerrado Vivo",
+  "description": "Plataforma de Apoio e Emergência às Brigadas Voluntárias do Cerrado",
+  "icons": [
+    {
+      "src": "/flame-icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#F9F9F9",
+  "theme_color": "#D35400",
+  "display": "standalone",
+  "orientation": "portrait"
+}
