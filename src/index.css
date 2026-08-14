@@ -77,7 +77,7 @@ html, body {
 /* Tipografia Material 3 */
 h1, h2, h3 {
   color: var(--md-sys-color-on-surface);
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: -0.015em;
 }
 
@@ -156,7 +156,6 @@ h2 {
   border: 1px solid var(--md-sys-color-outline-variant);
 }
 
-/* Animação de Radar Pulse para o Ponto de Status */
 .status-dot {
   width: 9px;
   height: 9px;
@@ -305,18 +304,20 @@ h2 {
   }
 }
 
+/* Container do Botão Flutuante (FAB) - Z-INDEX ALTO CORRIGIDO PARA FICAR ACIMA DO MAPA LEAFLET */
 .fab-report-container {
   position: fixed;
   bottom: 84px;
   right: 20px;
-  z-index: 250;
+  z-index: 99999 !important; /* Corrigido: z-index superior às camadas do Leaflet */
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  pointer-events: auto;
 }
 
 .fab-report-label {
-  background: rgba(38, 25, 20, 0.9);
+  background: rgba(38, 25, 20, 0.92);
   backdrop-filter: blur(8px);
   color: #FFF;
   font-size: 0.75rem;
@@ -531,7 +532,7 @@ h2 {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 300;
+  z-index: 999999 !important; /* Modal z-index superior a tudo */
   padding: 16px;
   animation: fadeIn 0.2s ease;
 }

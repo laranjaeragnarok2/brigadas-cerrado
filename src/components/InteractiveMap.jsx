@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -50,9 +50,8 @@ function LocationPicker({ onSelectLocation }) {
 }
 
 export default function InteractiveMap({ reports = [], onSelectLocation, selectedCoords, isPickMode = false }) {
-  const [mapCenter, setMapCenter] = useState(DEFAULT_CENTER);
+  const [mapCenter] = useState(DEFAULT_CENTER);
 
-  // Mapeia coordenadas dos relatos fictícios/reais
   const getCoordsForReport = (rep, idx) => {
     if (rep.coords && rep.coords.includes(',')) {
       const parts = rep.coords.split(',');
@@ -60,7 +59,6 @@ export default function InteractiveMap({ reports = [], onSelectLocation, selecte
       const lng = parseFloat(parts[1]);
       if (!isNaN(lat) && !isNaN(lng)) return [lat, lng];
     }
-    // Fallback de coordenadas espalhadas na Chapada/Cavalcante
     const offsets = [
       [-14.1311, -47.5218],
       [-13.7964, -47.4583],
@@ -71,11 +69,11 @@ export default function InteractiveMap({ reports = [], onSelectLocation, selecte
   };
 
   return (
-    <div style={{ width: '100%', height: '280px', borderRadius: 'var(--md-shape-corner-medium)', overflow: 'hidden', border: '1px solid #D4C7B8', position: 'relative' }}>
+    <div style={{ width: '100%', height: '280px', borderRadius: 'var(--md-shape-corner-medium)', overflow: 'hidden', border: '1px solid #D4C7B8', position: 'relative', zIndex: 1, isolation: 'isolate' }}>
       <MapContainer
         center={mapCenter}
         zoom={DEFAULT_ZOOM}
-        style={{ width: '100%', height: '100%' }}
+        style={{ width: '100%', height: '100%', zIndex: 1 }}
         scrollWheelZoom={false}
       >
         <TileLayer
