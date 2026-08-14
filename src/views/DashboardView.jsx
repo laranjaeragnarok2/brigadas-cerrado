@@ -22,13 +22,13 @@ export default function DashboardView({ onNavigate, onApoiar, onOpenReportModal,
         </div>
       </div>
 
-      {/* Seção Waze do Cerrado com Mapa Interativo */}
+      {/* Seção de Mapeamento e Relatos com Mapa Interativo */}
       <div className="section-card" style={{ borderLeftColor: '#A66844', background: '#F9F4EE', marginBottom: '24px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Radio size={20} color="#A66844" className="spin" />
             <h3 style={{ fontSize: '1.1rem', color: '#593122', margin: 0 }}>
-              Mapa e Relatos da Comunidade (Waze do Cerrado)
+              Mapa e Relatos da Comunidade
             </h3>
           </div>
           <button
@@ -89,7 +89,7 @@ export default function DashboardView({ onNavigate, onApoiar, onOpenReportModal,
                       </div>
                     </div>
 
-                    {/* Botão de Confirmação Única (Impede votos infinitos) */}
+                    {/* Botão de Confirmação Única */}
                     <button
                       onClick={() => onConfirmReport(rep.id)}
                       style={{

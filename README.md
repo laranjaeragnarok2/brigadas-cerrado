@@ -30,7 +30,7 @@ Inspirada na estética da paisagem goiana e construída sobre o sistema **Google
 
 ## 🌟 Principais Recursos
 
-### 📍 Mapeamento & Alertas (Waze do Cerrado)
+### 📍 Mapeamento & Alertas da Comunidade
 - **Reporte Rápido com GPS:** Envio de alertas de foco ativo ou coluna de fumaça com captura de coordenadas automática via satélite.
 - **Mapa Interativo (OpenStreetMap):** Visualização em tempo real de focos de calor com marcadores dinâmicos.
 - **Validação Comunitária:** Sistema de confirmação único por moradores (`Confirmado por moradores`) para atestar a veracidade das ocorrências e evitar alarmes falsos.
