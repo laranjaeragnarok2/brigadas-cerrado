@@ -1,76 +1,96 @@
-// Serviço de Integração de Dados em Tempo Real (APIs & Supabase)
-import { brigadasMock, estatisticasGlobais } from './mockData';
+// Módulo de Conexão com Supabase e APIs do INPE
+import { brigadasMock, cursosMock, estatisticasGlobais } from './mockData';
 
-// Configurações de Variáveis de Ambiente (configure no arquivo .env)
+// Variáveis do Supabase lidas do arquivo .env
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || '';
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
-const WEBHOOK_VOLUNTARIADO_URL = import.meta.env.VITE_WEBHOOK_URL || '';
 
 /**
- * 1. Busca Focos de Queimadas do Satélite INPE em Tempo Real (API Gratuita)
+ * Helper para requisições REST ao Supabase sem precisar de dependências pesadas
+ */
+async function supabaseFetch(endpoint, options = {}) {
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) return null;
+
+  const url = `${SUPABASE_URL}/rest/v1/${endpoint}`;
+  const defaultHeaders = {
+    'apikey': SUPABASE_ANON_KEY,
+    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+    'Content-Type': 'application/json',
+    'Prefer': 'return=representation'
+  };
+
+  try {
+    const response = await fetch(url, {
+      ...options,
+      headers: { ...defaultHeaders, ...options.headers }
+    });
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    return await response.json();
+  } catch (err) {
+    console.warn(`[Supabase] Erro ao consultar ${endpoint}:`, err);
+    return null;
+  }
+}
+
+/**
+ * 1. Busca Brigadas Mapeadas (Tabela "brigadas")
+ */
+export async function fetchBrigadas() {
+  const data = await supabaseFetch('brigadas?select=*');
+  if (data && data.length > 0) return data;
+  return brigadasMock; // Fallback para dados locais se tabela estiver vazia
+}
+
+/**
+ * 2. Busca Cursos e Editais (Tabela "cursos")
+ */
+export async function fetchCursos() {
+  const data = await supabaseFetch('cursos?select=*');
+  if (data && data.length > 0) return data;
+  return cursosMock;
+}
+
+/**
+ * 3. Busca Relatos de Fogo do Waze Cerrado (Tabela "relatos_fogo")
+ */
+export async function fetchRelatosFogo() {
+  const data = await supabaseFetch('relatos_fogo?select=*&order=created_at.desc');
+  return data;
+}
+
+/**
+ * 4. Insere Novo Relato de Fogo (Waze Cerrado) no Supabase
+ */
+export async function saveRelatoFogo(relato) {
+  return await supabaseFetch('relatos_fogo', {
+    method: 'POST',
+    body: JSON.stringify({
+      titulo: relato.title,
+      tipo: relato.type,
+      localizacao: relato.location,
+      coordenadas: relato.coords,
+      descricao: relato.description,
+      confirmacoes: relato.confirmations || 1
+    })
+  });
+}
+
+/**
+ * 5. Consulta Satélites INPE (BDQueimadas API Gratuita)
  */
 export async function fetchINPEFocos() {
   try {
     const response = await fetch('https://queimadas.dgi.inpe.br/api/focos/?bioma=Cerrado&limite=50');
-    if (!response.ok) throw new Error('Erro na requisição ao INPE');
-    
+    if (!response.ok) throw new Error('Falha ao conectar à API do INPE');
     const focos = await response.json();
     return {
       focosAtivosCount: focos.length || 14,
       focosLista: focos
     };
   } catch (error) {
-    console.warn("Usando fallback de estatísticas locais:", error);
     return {
       focosAtivosCount: estatisticasGlobais.focosAtivos,
       focosLista: []
     };
   }
-}
-
-/**
- * 2. Busca Coleção de Brigadas do Supabase / Banco Real
- */
-export async function fetchBrigadas() {
-  // Se houver chave do Supabase configurada, busca do banco real
-  if (SUPABASE_URL && SUPABASE_ANON_KEY) {
-    try {
-      const response = await fetch(`${SUPABASE_URL}/rest/v1/brigadas?select=*`, {
-        headers: {
-          'apikey': SUPABASE_ANON_KEY,
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
-        }
-      });
-      if (!response.ok) throw new Error('Erro ao buscar brigadas no Supabase');
-      const data = await response.json();
-      return data.length > 0 ? data : brigadasMock;
-    } catch (err) {
-      console.warn("Erro no Supabase, usando dados locais:", err);
-      return brigadasMock;
-    }
-  }
-  
-  // Se não houver chave configurada, usa os dados simulados
-  return brigadasMock;
-}
-
-/**
- * 3. Envia Inscrição de Voluntário via Webhook (Make / Zapier / n8n)
- */
-export async function sendVolunteerForm(formData) {
-  if (WEBHOOK_VOLUNTARIADO_URL) {
-    const response = await fetch(WEBHOOK_VOLUNTARIADO_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        ...formData,
-        timestamp: new Date().toISOString(),
-        origem: 'Plataforma Brigadas do Cerrado'
-      })
-    });
-    return response.ok;
-  }
-
-  // Simulação de envio com sucesso se não houver URL no .env
-  return new Promise((resolve) => setTimeout(() => resolve(true), 1000));
 }

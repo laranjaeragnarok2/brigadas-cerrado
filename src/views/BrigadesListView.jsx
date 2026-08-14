@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { brigadasMock } from '../data/mockData';
+import { fetchBrigadas } from '../data/apiService';
 import BrigadeCard from '../components/BrigadeCard';
 import SkeletonLoader from '../components/SkeletonLoader';
 import { Search, Filter, RefreshCw, AlertCircle } from 'lucide-react';
@@ -11,14 +11,19 @@ export default function BrigadesListView({ onApoiar }) {
   const [isError, setIsError] = useState(false);
   const [brigadas, setBrigadas] = useState([]);
 
-  const loadBrigadasData = () => {
+  const loadBrigadasData = async () => {
     setIsLoading(true);
     setIsError(false);
     
-    setTimeout(() => {
-      setBrigadas(brigadasMock);
+    try {
+      const data = await fetchBrigadas();
+      setBrigadas(data);
+    } catch (err) {
+      console.error("Erro ao carregar brigadas:", err);
+      setIsError(true);
+    } finally {
       setIsLoading(false);
-    }, 600);
+    }
   };
 
   useEffect(() => {
@@ -27,9 +32,9 @@ export default function BrigadesListView({ onApoiar }) {
 
   const filteredBrigadas = brigadas.filter((b) => {
     const matchesSearch = 
-      b.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      b.municipio.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      b.tags_necessidade.some(t => t.toLowerCase().includes(searchTerm.toLowerCase()));
+      (b.nome && b.nome.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (b.municipio && b.municipio.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (b.tags_necessidade && b.tags_necessidade.some(t => t.toLowerCase().includes(searchTerm.toLowerCase())));
 
     const matchesStatus = 
       selectedStatus === 'all' || b.status_cor === selectedStatus;
