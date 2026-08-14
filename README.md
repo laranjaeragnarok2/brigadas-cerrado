@@ -1,44 +1,75 @@
-# Brigadas do Cerrado Vivo
+<div align="center">
 
-**Plataforma Comunitária de Mapeamento, Alerta e Apoio às Brigadas Voluntárias do Cerrado Goiano**
+  <img src="public/cerrado-banner.png" alt="Brigadas do Cerrado Vivo" width="100%" style="border-radius: 12px;" />
 
-Plataforma Web PWA de alta performance projetada com abordagem Mobile-First para apoio logístico, doações diretas via PIX sem intermediários, alertas de focos de incêndio em tempo real estilo Waze e suporte a funcionamento offline em áreas isoladas.
+  <br /><br />
+
+  <h1>🌾 Brigadas do Cerrado Vivo</h1>
+
+  <p><strong>Plataforma Comunitária de Apoio Direto às Brigadas Voluntárias e Mapeamento Colaborativo no Bioma Cerrado</strong></p>
+
+  <p>
+    <a href="https://laranjaeragnarok2.github.io/brigadas-cerrado/">
+      <img src="https://img.shields.io/badge/Acessar_Aplicação_Ao_Vivo-https://laranjaeragnarok2.github.io/brigadas--cerrado/-BC4712?style=for-the-badge" alt="Ver Aplicação" />
+    </a>
+    <img src="https://img.shields.io/badge/PWA-Offline_First-1B2E24?style=for-the-badge" alt="PWA Ready" />
+    <img src="https://img.shields.io/badge/Design-Material_3_Google-A0C3D9?style=for-the-badge" alt="Google Material 3" />
+  </p>
+
+</div>
 
 ---
 
-## 📌 Principais Recursos
+## 🍃 Sobre o Projeto
 
-- **Alertas de Fogo e Fumaça em Tempo Real (Estilo Waze):** Mapeamento colaborativo com suporte a GPS e confirmação presencial de moradores e brigadistas.
-- **Doações Diretas via PIX:** Apoio financeiro direto para contas oficiais de brigadas comunitárias da Chapada dos Veadeiros, Cavalcante, Vão de Almas, Pirenópolis e Mambaí.
-- **Suporte Offline (PWA / Service Worker):** Telefones de emergência (193 Corpo de Bombeiros, Prevfogo 0800, ICMBio) e protocolos de segurança acessíveis mesmo sem sinal de celular.
-- **Formação e Voluntariado Remoto:** Inscrições para suporte em GIS, comunicação, design e logística de combate.
-- **Triangulação de Dados (INPE + Campo):** Algoritmo de cruzamento entre satélites de alta resolução e relatos de campo.
+O **Brigadas do Cerrado Vivo** é uma iniciativa tecnológica e comunitária criada para fortalecer o combate a incêndios florestais no coração do Brasil. A plataforma conecta moradores, turistas, doadores e brigadistas voluntários das regiões da **Chapada dos Veadeiros, Cavalcante, Vão de Almas, Pirenópolis e Mambaí**.
+
+Inspirada na estética da paisagem goiana e construída sobre o sistema **Google Material Design 3**, a plataforma garante legibilidade, rapidez e facilidade de uso mesmo em áreas de sinal de celular fraco ou inexistente.
 
 ---
 
-## 🛠️ Tecnologias Utilizadas
+## 🌟 Principais Recursos
 
-- **Core:** React 19 + Vite 6
-- **Estilização:** CSS Vanilla com Design Tokens (Estética Goiana Orgânica)
-- **Ícones:** Lucide React (SVG limpos e responsivos)
-- **PWA:** Service Worker + Web App Manifest
-- **Deploy:** GitHub Pages (`npm run deploy`) & Suporte a Docker / Coolify
+### 📍 Mapeamento & Alertas (Waze do Cerrado)
+- **Reporte Rápido com GPS:** Envio de alertas de foco ativo ou coluna de fumaça com captura de coordenadas automática via satélite.
+- **Mapa Interativo (OpenStreetMap):** Visualização em tempo real de focos de calor com marcadores dinâmicos.
+- **Validação Comunitária:** Sistema de confirmação único por moradores (`Confirmado por moradores`) para atestar a veracidade das ocorrências e evitar alarmes falsos.
+- **Fotografia Opcional:** Envio de imagem da ocorrência direto da câmera do celular.
+
+### 🤝 Apoio Direto & Transparência
+- **Doações Diretas via PIX:** Apoio financeiro direto para a conta oficial de cada brigada comunitária, sem intermediários ou taxas.
+- **Transparência de Insumos:** Lista das necessidades mais urgentes de cada brigada (abafadores, bombas costais, combustível para 4x4, alimentação de campo).
+
+### 📶 Funcionamento Offline (PWA)
+- **Modo Emergência Sem Sinal:** Telefones úteis (193 Corpo de Bombeiros, Prevfogo 0800, ICMBio, Defesa Civil) e orientações de segurança salvos em cache no smartphone para consulta em áreas isoladas.
+
+---
+
+## 🎨 Paleta de Cores Orgânica
+
+A identidade visual da aplicação foi extraída diretamente das cores naturais do bioma Cerrado:
+
+- 🌌 **`#A0C3D9` (Céu do Cerrado):** Azul limpo do horizonte e acentos de verificação.
+- 🌾 **`#BF834E` (Folhagem Dourada):** Tom de estiagem e avisos de fumaça.
+- 🧱 **`#A66844` (Terra Cota Cerrado):** Tom barro queimado para botões e chamadas principais.
+- 🪵 **`#593122` (Madeira Queimada):** Tom escuro de tronco para títulos e cabeçalhos.
+- 🖤 **`#261914` (Carvão Vegetal):** Contraste de texto de alta legibilidade.
 
 ---
 
 ## 🚀 Como Rodar Localmente
 
 ```bash
-# 1. Clonar o repositório
-git clone https://github.com/SEU_USUARIO/brigadas-cerrado.git
+# 1. Clonar este repositório
+git clone https://github.com/laranjaeragnarok2/brigadas-cerrado.git
 
-# 2. Entrar na pasta do projeto
+# 2. Entrar na pasta
 cd brigadas-cerrado
 
 # 3. Instalar as dependências
 npm install
 
-# 4. Iniciar o servidor de desenvolvimento
+# 4. Iniciar o servidor local
 npm run dev
 ```
 
@@ -46,17 +77,8 @@ Abra o navegador em `http://localhost:5173`.
 
 ---
 
-## 📄 Publicação no GitHub Pages
+<div align="center">
 
-```bash
-# Gerar a build e publicar no GitHub Pages com 1 comando
-npm run deploy
-```
+  <p><strong>Código eficiente salva vidas e protege a nossa terra. 🌿🔥</strong></p>
 
----
-
-## 📋 Metadados do Repositório Git (Sugestão para o GitHub)
-
-- **Repository Name:** `brigadas-cerrado`
-- **Short Description:** `Plataforma comunitária de mapeamento, alerta de queimadas e apoio direto às brigadas voluntárias do bioma Cerrado em Goiás.`
-- **Topics/Tags:** `cerrado`, `brigadas-voluntarias`, `goias`, `pwa`, `react`, `vite`, `fire-monitoring`, `inpe`, `waze-cerrado`
+</div>
