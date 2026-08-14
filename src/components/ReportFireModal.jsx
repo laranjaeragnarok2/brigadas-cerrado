@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Flame, Navigation, Send, CheckCircle2, AlertTriangle, CloudRain } from 'lucide-react';
+import { X, Flame, Navigation, Send, CheckCircle2, AlertTriangle, CloudRain, Camera, Trash2, Phone } from 'lucide-react';
 
 export default function ReportFireModal({ isOpen, onClose, onAddReport }) {
   const [reportType, setReportType] = useState('danger');
@@ -7,6 +7,8 @@ export default function ReportFireModal({ isOpen, onClose, onAddReport }) {
   const [coords, setCoords] = useState(null);
   const [isGettingGps, setIsGettingGps] = useState(false);
   const [description, setDescription] = useState('');
+  const [contactInfo, setContactInfo] = useState('');
+  const [photoPreview, setPhotoPreview] = useState(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   if (!isOpen) return null;
@@ -35,6 +37,21 @@ export default function ReportFireModal({ isOpen, onClose, onAddReport }) {
     }
   };
 
+  const handlePhotoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPhotoPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemovePhoto = () => {
+    setPhotoPreview(null);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const newReport = {
@@ -44,8 +61,10 @@ export default function ReportFireModal({ isOpen, onClose, onAddReport }) {
       location: locationName || 'Alto Paraíso / Cavalcante (GO)',
       coords: coords ? `${coords.lat}, ${coords.lng}` : 'GPS Local',
       description,
+      contactInfo,
+      photo: photoPreview,
       confirmations: 1,
-      time: 'Agora mesmo (Relato de Morador)',
+      time: 'Agora mesmo (Relato com Contato e Foto)',
       userReported: true
     };
 
@@ -56,6 +75,10 @@ export default function ReportFireModal({ isOpen, onClose, onAddReport }) {
     setIsSubmitted(true);
     setTimeout(() => {
       setIsSubmitted(false);
+      setPhotoPreview(null);
+      setLocationName('');
+      setDescription('');
+      setContactInfo('');
       onClose();
     }, 2000);
   };
@@ -77,9 +100,9 @@ export default function ReportFireModal({ isOpen, onClose, onAddReport }) {
           {isSubmitted ? (
             <div style={{ textAlign: 'center', padding: '24px 12px' }}>
               <CheckCircle2 size={48} color="#1E8449" style={{ marginBottom: '12px' }} />
-              <h3 style={{ color: '#1E8449', marginBottom: '8px' }}>Aviso Registrado no Mapa</h3>
+              <h3 style={{ color: '#1E8449', marginBottom: '8px' }}>Aviso Registrado com Sucesso</h3>
               <p style={{ fontSize: '0.9rem', color: '#56645D' }}>
-                Seu relato foi transmitido para a rede de moradores e brigadas comunitárias da região.
+                Seu relato foi transmitido para a rede de moradores e brigadas comunitárias.
               </p>
             </div>
           ) : (
@@ -98,9 +121,9 @@ export default function ReportFireModal({ isOpen, onClose, onAddReport }) {
                     alignItems: 'center',
                     gap: '12px',
                     padding: '12px',
-                    borderRadius: 'var(--radius-md)',
-                    border: reportType === 'danger' ? '2px solid #A93226' : '1px solid #E6DFD5',
-                    background: reportType === 'danger' ? '#FDEDEC' : '#FFF',
+                    borderRadius: 'var(--md-shape-corner-medium)',
+                    border: reportType === 'danger' ? '2px solid #A93226' : '1px solid #D4C7B8',
+                    background: reportType === 'danger' ? '#F7EFE9' : '#FFF',
                     color: '#A93226',
                     fontWeight: 700,
                     textAlign: 'left',
@@ -110,7 +133,7 @@ export default function ReportFireModal({ isOpen, onClose, onAddReport }) {
                   <Flame size={22} color="#A93226" />
                   <div>
                     <div>Fogo Ativo / Incêndio na Serra</div>
-                    <div style={{ fontSize: '0.75rem', fontWeight: 500, color: '#78281F' }}>Chamas visíveis com risco de alastramento na vegetação</div>
+                    <div style={{ fontSize: '0.75rem', fontWeight: 500, color: '#6B4D3E' }}>Chamas visíveis com risco de alastramento na vegetação</div>
                   </div>
                 </button>
 
@@ -122,19 +145,19 @@ export default function ReportFireModal({ isOpen, onClose, onAddReport }) {
                     alignItems: 'center',
                     gap: '12px',
                     padding: '12px',
-                    borderRadius: 'var(--radius-md)',
-                    border: reportType === 'warning' ? '2px solid #D68910' : '1px solid #E6DFD5',
-                    background: reportType === 'warning' ? '#FEF9E7' : '#FFF',
-                    color: '#B7950B',
+                    borderRadius: 'var(--md-shape-corner-medium)',
+                    border: reportType === 'warning' ? '2px solid #BF834E' : '1px solid #D4C7B8',
+                    background: reportType === 'warning' ? '#F9F2EA' : '#FFF',
+                    color: '#BF834E',
                     fontWeight: 700,
                     textAlign: 'left',
                     cursor: 'pointer'
                   }}
                 >
-                  <AlertTriangle size={22} color="#D68910" />
+                  <AlertTriangle size={22} color="#BF834E" />
                   <div>
                     <div>Coluna de Fumaça Densa</div>
-                    <div style={{ fontSize: '0.75rem', fontWeight: 500, color: '#7D6608' }}>Fumaça vista à distância sem enxergar as chamas</div>
+                    <div style={{ fontSize: '0.75rem', fontWeight: 500, color: '#6B4D3E' }}>Fumaça vista à distância sem enxergar as chamas</div>
                   </div>
                 </button>
 
@@ -146,19 +169,19 @@ export default function ReportFireModal({ isOpen, onClose, onAddReport }) {
                     alignItems: 'center',
                     gap: '12px',
                     padding: '12px',
-                    borderRadius: 'var(--radius-md)',
-                    border: reportType === 'success' ? '2px solid #1E8449' : '1px solid #E6DFD5',
-                    background: reportType === 'success' ? '#EAFAF1' : '#FFF',
-                    color: '#1E8449',
+                    borderRadius: 'var(--md-shape-corner-medium)',
+                    border: reportType === 'success' ? '2px solid #2D6A4F' : '1px solid #D4C7B8',
+                    background: reportType === 'success' ? '#EDF3EF' : '#FFF',
+                    color: '#2D6A4F',
                     fontWeight: 700,
                     textAlign: 'left',
                     cursor: 'pointer'
                   }}
                 >
-                  <CloudRain size={22} color="#1E8449" />
+                  <CloudRain size={22} color="#2D6A4F" />
                   <div>
                     <div>Rescaldo Concluído / Aceiro</div>
-                    <div style={{ fontSize: '0.75rem', fontWeight: 500, color: '#145A32' }}>Foco extinto ou queimada controlada finalizada</div>
+                    <div style={{ fontSize: '0.75rem', fontWeight: 500, color: '#2D6A4F' }}>Foco extinto ou queimada controlada finalizada</div>
                   </div>
                 </button>
               </div>
@@ -179,10 +202,10 @@ export default function ReportFireModal({ isOpen, onClose, onAddReport }) {
                     type="button"
                     onClick={handleGetGps}
                     style={{
-                      background: '#1B2E24',
+                      background: '#593122',
                       color: '#FFF',
                       padding: '0 12px',
-                      borderRadius: 'var(--radius-md)',
+                      borderRadius: 'var(--md-shape-corner-medium)',
                       fontSize: '0.8rem',
                       fontWeight: 700,
                       display: 'flex',
@@ -199,6 +222,93 @@ export default function ReportFireModal({ isOpen, onClose, onAddReport }) {
                 </div>
               </div>
 
+              {/* Botão de Fotografia Opcional */}
+              <div className="form-group">
+                <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <Camera size={16} color="#A66844" />
+                  Fotografia da Ocorrência (Opcional)
+                </label>
+
+                {photoPreview ? (
+                  <div style={{ position: 'relative', marginTop: '6px', borderRadius: 'var(--md-shape-corner-medium)', overflow: 'hidden', border: '1px solid #D4C7B8' }}>
+                    <img 
+                      src={photoPreview} 
+                      alt="Pré-visualização da foto" 
+                      style={{ width: '100%', maxHeight: '180px', objectFit: 'cover', display: 'block' }} 
+                    />
+                    <button
+                      type="button"
+                      onClick={handleRemovePhoto}
+                      style={{
+                        position: 'absolute',
+                        top: '8px',
+                        right: '8px',
+                        background: 'rgba(38, 25, 20, 0.75)',
+                        color: '#FFF',
+                        padding: '6px 12px',
+                        borderRadius: 'var(--md-shape-corner-small)',
+                        fontSize: '0.75rem',
+                        fontWeight: 700,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        border: 'none',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <Trash2 size={14} /> Remover Foto
+                    </button>
+                  </div>
+                ) : (
+                  <label
+                    htmlFor="photo-upload"
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                      padding: '12px',
+                      background: '#F5EFE8',
+                      border: '2px dashed #D4C7B8',
+                      borderRadius: 'var(--md-shape-corner-medium)',
+                      color: '#593122',
+                      fontSize: '0.85rem',
+                      fontWeight: 700,
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <Camera size={18} color="#A66844" />
+                    <span>Tirar Foto ou Escolher Imagem</span>
+                    <input
+                      id="photo-upload"
+                      type="file"
+                      accept="image/*"
+                      capture="environment"
+                      onChange={handlePhotoChange}
+                      style={{ display: 'none' }}
+                    />
+                  </label>
+                )}
+              </div>
+
+              {/* Campo para Contato de Verificação (Opcional) */}
+              <div className="form-group">
+                <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <Phone size={16} color="#A66844" />
+                  Seu WhatsApp ou Telefone para Verificação (Opcional)
+                </label>
+                <input
+                  type="tel"
+                  className="form-control"
+                  placeholder="Ex: (62) 99999-8888 (Para checagem da brigada)"
+                  value={contactInfo}
+                  onChange={(e) => setContactInfo(e.target.value)}
+                />
+                <span style={{ fontSize: '0.72rem', color: '#6B4D3E', marginTop: '2px', display: 'block' }}>
+                  Usado apenas pelas brigadas comunitárias caso precisem confirmar a direção exata.
+                </span>
+              </div>
+
               <div className="form-group">
                 <label>Observação (Opcional)</label>
                 <textarea
@@ -210,7 +320,7 @@ export default function ReportFireModal({ isOpen, onClose, onAddReport }) {
                 />
               </div>
 
-              <button type="submit" className="btn-apoiar" style={{ background: '#BC4712' }}>
+              <button type="submit" className="btn-apoiar" style={{ background: '#A66844' }}>
                 <Send size={18} /> Transmitir Aviso à Comunidade
               </button>
             </form>
