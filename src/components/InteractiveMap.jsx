@@ -96,9 +96,20 @@ export default function InteractiveMap({ reports = [], onSelectLocation, isPickM
           layers="prodes-cerrado-nb:accumulated_deforestation_2000"
           format="image/png"
           transparent={true}
-          opacity={0.4}
+          opacity={0.35}
           attribution="INPE / TerraBrasilis"
         />
+
+        {/* Camada WMS do CENSIPAM Painel do Fogo (Territórios Protegidos & Quilombolas) */}
+        <WMSTileLayer
+          url="https://panorama.sipam.gov.br/geoserver/wms"
+          layers="painel_do_fogo:area_quilombola"
+          format="image/png"
+          transparent={true}
+          opacity={0.4}
+          attribution="CENSIPAM / Painel do Fogo"
+        />
+
 
         {isPickMode && <LocationPicker onSelectLocation={onSelectLocation} />}
 
