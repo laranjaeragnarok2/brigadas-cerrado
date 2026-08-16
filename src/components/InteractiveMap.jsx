@@ -11,35 +11,38 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
 });
 
-// Ícones customizados tipo pino de mapa para o CerradoVigil
-const fireIcon = L.divIcon({
-  className: 'custom-map-pin danger-pin',
-  html: '<div style="background:#C0392B; color:#FFFFFF; width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2.5px solid #FFFFFF; box-shadow:0 4px 14px rgba(192,57,43,0.6); font-size:16px;">🔥</div>',
-  iconSize: [34, 34],
-  iconAnchor: [17, 17],
-  popupAnchor: [0, -17]
-});
-
-const smokeIcon = L.divIcon({
-  className: 'custom-map-pin warning-pin',
-  html: '<div style="background:#D35400; color:#FFFFFF; width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2.5px solid #FFFFFF; box-shadow:0 4px 14px rgba(211,84,0,0.6); font-size:16px;">💨</div>',
-  iconSize: [34, 34],
-  iconAnchor: [17, 17],
-  popupAnchor: [0, -17]
-});
-
-const safeIcon = L.divIcon({
-  className: 'custom-map-pin success-pin',
-  html: '<div style="background:#27AE60; color:#FFFFFF; width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2.5px solid #FFFFFF; box-shadow:0 4px 14px rgba(39,174,96,0.6); font-size:16px;">✅</div>',
-  iconSize: [34, 34],
-  iconAnchor: [17, 17],
-  popupAnchor: [0, -17]
-});
-
-
-// Coordenadas Padrão: Estado de Goiás (Visão Geral Estadual)
-const DEFAULT_CENTER = [-15.8270, -49.8362];
+// Coordenadas Padrão: Corredor de Goiás (Chapada, Cavalcante, Pirenópolis, Brasília, Goiânia)
+const DEFAULT_CENTER = [-14.8000, -48.5000];
 const DEFAULT_ZOOM = 7;
+
+// Gerador dinâmico de ícones tipo pino para Leaflet
+function getMarkerIcon(type) {
+  if (type === 'danger') {
+    return L.divIcon({
+      className: 'custom-map-pin danger-pin',
+      html: '<div style="background:#C0392B; color:#FFFFFF; width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2.5px solid #FFFFFF; box-shadow:0 4px 14px rgba(192,57,43,0.7); font-size:16px; font-weight:bold;">🔥</div>',
+      iconSize: [34, 34],
+      iconAnchor: [17, 17],
+      popupAnchor: [0, -17]
+    });
+  }
+  if (type === 'warning') {
+    return L.divIcon({
+      className: 'custom-map-pin warning-pin',
+      html: '<div style="background:#D35400; color:#FFFFFF; width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2.5px solid #FFFFFF; box-shadow:0 4px 14px rgba(211,84,0,0.7); font-size:16px; font-weight:bold;">💨</div>',
+      iconSize: [34, 34],
+      iconAnchor: [17, 17],
+      popupAnchor: [0, -17]
+    });
+  }
+  return L.divIcon({
+    className: 'custom-map-pin success-pin',
+    html: '<div style="background:#27AE60; color:#FFFFFF; width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2.5px solid #FFFFFF; box-shadow:0 4px 14px rgba(39,174,96,0.7); font-size:16px; font-weight:bold;">✅</div>',
+    iconSize: [34, 34],
+    iconAnchor: [17, 17],
+    popupAnchor: [0, -17]
+  });
+}
 
 // Componente para capturar clique no mapa
 function LocationPicker({ onSelectLocation }) {
@@ -57,10 +60,10 @@ export default function InteractiveMap({ reports = [], onSelectLocation, isPickM
   const [mapCenter] = useState(DEFAULT_CENTER);
 
   const getCoordsForReport = (rep, idx) => {
-    if (rep.coords && rep.coords.includes(',')) {
+    if (rep && rep.coords && typeof rep.coords === 'string' && rep.coords.includes(',')) {
       const parts = rep.coords.split(',');
-      const lat = parseFloat(parts[0]);
-      const lng = parseFloat(parts[1]);
+      const lat = parseFloat(parts[0].trim());
+      const lng = parseFloat(parts[1].trim());
       if (!isNaN(lat) && !isNaN(lng)) return [lat, lng];
     }
     // Offsets distribuídos pelas regiões do Estado de Goiás
@@ -74,7 +77,6 @@ export default function InteractiveMap({ reports = [], onSelectLocation, isPickM
     ];
     return offsetsGoiás[idx % offsetsGoiás.length];
   };
-
 
   const defaultGoiásFocos = [
     { id: 'f_go_1', type: 'danger', title: 'Foco em Encosta de Serra', location: 'Alto Paraíso de Goiás (GO-237 km 14)', coords: '-14.1311, -47.5218', description: 'Chamas avançando na vegetação alta.', confirmations: 12 },
@@ -130,10 +132,10 @@ export default function InteractiveMap({ reports = [], onSelectLocation, isPickM
         {/* Renderiza marcadores dos relatos */}
         {mapReports.map((rep, idx) => {
           const pos = getCoordsForReport(rep, idx);
-          const icon = rep.type === 'danger' ? fireIcon : rep.type === 'warning' ? smokeIcon : safeIcon;
+          const customIcon = getMarkerIcon(rep.type || 'danger');
 
           return (
-            <Marker key={rep.id || idx} position={pos} icon={icon}>
+            <Marker key={rep.id || idx} position={pos} icon={customIcon}>
               <Popup>
                 <div style={{ fontSize: '0.85rem', fontFamily: 'sans-serif' }}>
                   <strong style={{ color: '#8C4526', fontSize: '0.9rem', display: 'block', marginBottom: '2px' }}>
@@ -158,7 +160,6 @@ export default function InteractiveMap({ reports = [], onSelectLocation, isPickM
         })}
       </MapContainer>
 
-
       {isPickMode && (
         <div style={{ position: 'absolute', bottom: '10px', left: '10px', zIndex: 1000, background: 'rgba(38,25,20,0.85)', color: '#FFF', padding: '6px 12px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 'bold' }}>
           Clique no mapa para marcar o ponto exato
@@ -167,4 +168,6 @@ export default function InteractiveMap({ reports = [], onSelectLocation, isPickM
     </div>
   );
 }
+
+
 
