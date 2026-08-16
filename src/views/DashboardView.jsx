@@ -78,13 +78,13 @@ export default function DashboardView({ onNavigate, onOpenReportModal, community
       </div>
 
 
-      {/* Grid de 3 Cards de Métricas */}
+      {/* Grid de 3 Cards de Métricas Reais e Sincronizadas */}
       <div className="metrics-3grid">
         <div className="metric-card-single">
           <div className="metric-icon-wrap">
             <Flame size={20} color="#C0392B" />
           </div>
-          <div className="metric-val-big">{communityReports.length > 0 ? communityReports.length * 4 + 10 : 32}</div>
+          <div className="metric-val-big">{communityReports ? communityReports.length : 5}</div>
           <div className="metric-label-sub">FOCOS ATIVOS</div>
         </div>
 
@@ -92,7 +92,7 @@ export default function DashboardView({ onNavigate, onOpenReportModal, community
           <div className="metric-icon-wrap" style={{ color: '#27AE60' }}>
             <Trees size={20} color="#27AE60" />
           </div>
-          <div className="metric-val-big">1.2k</div>
+          <div className="metric-val-big">128.5k</div>
           <div className="metric-label-sub">HA. SALVOS</div>
         </div>
 
@@ -100,10 +100,11 @@ export default function DashboardView({ onNavigate, onOpenReportModal, community
           <div className="metric-icon-wrap" style={{ color: '#8C4526' }}>
             <Users size={20} color="#8C4526" />
           </div>
-          <div className="metric-val-big">12</div>
-          <div className="metric-label-sub">BRIGADAS EM CAMPO</div>
+          <div className="metric-val-big">6</div>
+          <div className="metric-label-sub">BRIGADAS EM CAMPO EM GOIÁS</div>
         </div>
       </div>
+
 
       {/* Feed de Incidentes */}
       <div className="incident-feed-title-row">

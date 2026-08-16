@@ -39,8 +39,8 @@ export default function App() {
       location: 'Alto Paraíso de Goiás (GO-237 km 14)',
       coords: '-14.1311, -47.5218',
       description: 'Chamas avançando rápido na vegetação baixa da serra.',
-      confirmations: 6,
-      time: 'Há 12 minutos (Verificado + Moradores)'
+      confirmations: 12,
+      time: 'Há 12 minutos (Verificado)'
     },
     {
       id: 'rep_2',
@@ -49,10 +49,41 @@ export default function App() {
       location: 'Cavalcante - Limite Quilombo Kalunga',
       coords: '-13.7964, -47.4583',
       description: 'Fumaça branca densa subindo do vale.',
-      confirmations: 4,
+      confirmations: 8,
       time: 'Há 45 minutos (Em checagem)'
+    },
+    {
+      id: 'rep_3',
+      type: 'danger',
+      title: 'Incêndio Florestal em Serra',
+      location: 'Pirenópolis - Parque dos Pyreneus',
+      coords: '-15.8504, -48.9583',
+      description: 'Foco ativo próximo à divisa do parque.',
+      confirmations: 15,
+      time: 'Há 1 hora (Brigada a caminho)'
+    },
+    {
+      id: 'rep_4',
+      type: 'warning',
+      title: 'Alerta Preventivo de Queimada',
+      location: 'Mineiros - Parque Nacional das Emas',
+      coords: '-17.5683, -52.5511',
+      description: 'Rondas de monitoramento no perímetro.',
+      confirmations: 5,
+      time: 'Há 2 horas'
+    },
+    {
+      id: 'rep_5',
+      type: 'danger',
+      title: 'Foco de Calor em Vereda',
+      location: 'Mambaí - Nordeste Goiano',
+      coords: '-14.4842, -46.1114',
+      description: 'Moradores relataram início de foco em vegetação.',
+      confirmations: 9,
+      time: 'Há 3 horas'
     }
   ]);
+
 
   // Carregar relatos do Supabase ao iniciar
   useEffect(() => {
