@@ -11,27 +11,31 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
 });
 
-// Ícones customizados para focos do Waze Cerrado
+// Ícones customizados tipo pino de mapa para o CerradoVigil
 const fireIcon = L.divIcon({
   className: 'custom-map-pin danger-pin',
-  html: '<div style="background:#A93226; color:#FFF; width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid #FFF; box-shadow:0 3px 8px rgba(0,0,0,0.3); font-size:14px; font-weight:bold;">🔥</div>',
-  iconSize: [30, 30],
-  iconAnchor: [15, 15]
+  html: '<div style="background:#C0392B; color:#FFFFFF; width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2.5px solid #FFFFFF; box-shadow:0 4px 14px rgba(192,57,43,0.6); font-size:16px;">🔥</div>',
+  iconSize: [34, 34],
+  iconAnchor: [17, 17],
+  popupAnchor: [0, -17]
 });
 
 const smokeIcon = L.divIcon({
   className: 'custom-map-pin warning-pin',
-  html: '<div style="background:#BF834E; color:#FFF; width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid #FFF; box-shadow:0 3px 8px rgba(0,0,0,0.3); font-size:14px; font-weight:bold;">💨</div>',
-  iconSize: [30, 30],
-  iconAnchor: [15, 15]
+  html: '<div style="background:#D35400; color:#FFFFFF; width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2.5px solid #FFFFFF; box-shadow:0 4px 14px rgba(211,84,0,0.6); font-size:16px;">💨</div>',
+  iconSize: [34, 34],
+  iconAnchor: [17, 17],
+  popupAnchor: [0, -17]
 });
 
 const safeIcon = L.divIcon({
   className: 'custom-map-pin success-pin',
-  html: '<div style="background:#2D6A4F; color:#FFF; width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid #FFF; box-shadow:0 3px 8px rgba(0,0,0,0.3); font-size:14px; font-weight:bold;">✅</div>',
-  iconSize: [30, 30],
-  iconAnchor: [15, 15]
+  html: '<div style="background:#27AE60; color:#FFFFFF; width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2.5px solid #FFFFFF; box-shadow:0 4px 14px rgba(39,174,96,0.6); font-size:16px;">✅</div>',
+  iconSize: [34, 34],
+  iconAnchor: [17, 17],
+  popupAnchor: [0, -17]
 });
+
 
 // Coordenadas Padrão: Estado de Goiás (Visão Geral Estadual)
 const DEFAULT_CENTER = [-15.8270, -49.8362];
