@@ -1,10 +1,47 @@
 export const estatisticasGlobais = {
-  focosAtivos: 14,
+  focosAtivos: 24,
   hectaresProtegidos: "128.500 ha",
   brigadasAtivas: 42,
   voluntariosCadastrados: 518,
   ultimaAtualizacao: "Checagem de Campo + Satélite INPE/BDQueimadas"
 };
+
+export const focosSatéliteGoiás = [
+  // Chapada dos Veadeiros & Norte Goiano
+  { id: 'sat_1', type: 'danger', title: 'Foco Ativo - GO-237 km 14', location: 'Alto Paraíso de Goiás, GO', coords: '-14.1311, -47.5218', confirmations: 18, description: 'Satélite VIIRS detectou anomalia térmica em área de cerrado denso.' },
+  { id: 'sat_2', type: 'danger', title: 'Incêndio em Encosta', location: 'Cavalcante (Quilombo Kalunga), GO', coords: '-13.7964, -47.4583', confirmations: 14, description: 'Foco ativo próximo à comunidade Vão de Almas.' },
+  { id: 'sat_3', type: 'warning', title: 'Fumaça em Pastagem', location: 'Teresina de Goiás, GO', coords: '-13.7781, -47.2614', confirmations: 7, description: 'Coluna de fumaça em área de pastagem seca.' },
+  { id: 'sat_4', type: 'danger', title: 'Foco de Calor em Mata Ciliar', location: 'Minaçu, GO', coords: '-13.5328, -48.2203', confirmations: 11, description: 'Sensor MODIS registrou alta temperatura no leito do rio.' },
+  { id: 'sat_5', type: 'warning', title: 'Queimada Agrícola Não Autorizada', location: 'Porangatu, GO', coords: '-13.4411, -49.1486', confirmations: 5, description: 'Foco isolado na zona rural norte.' },
+  { id: 'sat_6', type: 'danger', title: 'Foco Ativo - Vão dos Moleques', location: 'Colinas do Sul, GO', coords: '-14.1508, -48.0772', confirmations: 11, description: 'Avanço de chamas rumo ao reservatório de Serra da Mesa.' },
+
+  // Nordeste Goiano & Mambaí
+  { id: 'sat_7', type: 'danger', title: 'Foco em Veredas', location: 'Mambaí, GO', coords: '-14.4842, -46.1114', confirmations: 16, description: 'Incêndio em área de veredas e buritizais.' },
+  { id: 'sat_8', type: 'warning', title: 'Coluna de Fumaça em Caverna', location: 'Alvorada do Norte, GO', coords: '-14.4811, -46.4952', confirmations: 6, description: 'Fumaça detectada na serra de calcário.' },
+  { id: 'sat_9', type: 'danger', title: 'Foco Ativo na Fronteira com a Bahia', location: 'Posse, GO', coords: '-14.0931, -46.3694', confirmations: 10, description: 'Foco persistente em vegetação típica de cerrado baiano.' },
+  { id: 'sat_10', type: 'warning', title: 'Fogo em Pastagem', location: 'Flores de Goiás, GO', coords: '-14.4491, -47.0522', confirmations: 4, description: 'Queima controlada que escapou para reserva legal.' },
+
+  // Centro / Pirenópolis / Entorno DF
+  { id: 'sat_11', type: 'danger', title: 'Incêndio em Parque Estadual', location: 'Pirenópolis (Pyreneus), GO', coords: '-15.8504, -48.9583', confirmations: 22, description: 'Foco de grandes proporções no topo da serra dos Pyreneus.' },
+  { id: 'sat_12', type: 'warning', title: 'Coluna de Fumaça na BR-070', location: 'Corumbá de Goiás, GO', coords: '-15.7642, -48.8092', confirmations: 9, description: 'Fumaça comprometendo a visibilidade da rodovia.' },
+  { id: 'sat_13', type: 'danger', title: 'Foco de Calor em Reserva', location: 'Formosa, GO', coords: '-15.5372, -47.3344', confirmations: 13, description: 'Foco próximo à Lagoa Feia e Salto do Itiquira.' },
+  { id: 'sat_14', type: 'warning', title: 'Queimada em Área Agrícola', location: 'Cristalina, GO', coords: '-16.7686, -47.6136', confirmations: 8, description: 'Ponto quente detectado em área irrigada.' },
+  { id: 'sat_15', type: 'danger', title: 'Foco Próximo ao DF', location: 'Luziânia, GO', coords: '-16.2528, -47.9500', confirmations: 11, description: 'Alerta de fumaça na divisa com o Distrito Federal.' },
+  { id: 'sat_16', type: 'warning', title: 'Fogo em Capoeira', location: 'Padre Bernardo, GO', coords: '-15.1631, -48.2831', confirmations: 5, description: 'Foco inicial perto do Rio Maranhão.' },
+
+  // Sudoeste & Sul de Goiás
+  { id: 'sat_17', type: 'danger', title: 'Incêndio no Perímetro do Parque', location: 'Mineiros (Parque das Emas), GO', coords: '-17.5683, -52.5511', confirmations: 19, description: 'Fogo avançando com vento forte no Parque Nacional das Emas.' },
+  { id: 'sat_18', type: 'danger', title: 'Foco de Calor em Palhada', location: 'Rio Verde, GO', coords: '-17.7922, -50.9189', confirmations: 15, description: 'Foco em lavoura de milho colhida.' },
+  { id: 'sat_19', type: 'warning', title: 'Fumaça em Margem de Rodovia', location: 'Jataí, GO', coords: '-17.8814, -51.7144', confirmations: 7, description: 'Fogo de acostamento avançando para reserva legal.' },
+  { id: 'sat_20', type: 'danger', title: 'Incêndio em Serra de Caldas', location: 'Caldas Novas, GO', coords: '-17.7441, -48.6258', confirmations: 14, description: 'Foco no Parque Estadual da Serra de Caldas Novas.' },
+  { id: 'sat_21', type: 'warning', title: 'Foco em Matagal', location: 'Morrinhos, GO', coords: '-17.7314, -49.0994', confirmations: 6, description: 'Fumaça branca avistada perto da BR-153.' },
+
+  // Oeste & Vale do Araguaia
+  { id: 'sat_22', type: 'danger', title: 'Foco na Borda da Floresta', location: 'Aruanã (Rio Araguaia), GO', coords: '-14.9131, -51.0831', confirmations: 12, description: 'Foco de calor em mata de galeria às margens do Araguaia.' },
+  { id: 'sat_23', type: 'warning', title: 'Fumaça em Área de Vereda', location: 'Goiás Velho, GO', coords: '-15.9339, -50.1408', confirmations: 8, description: 'Alerta preventivo na serra de Jaraguá/Goiás.' },
+  { id: 'sat_24', type: 'danger', title: 'Foco Ativo de Alta Intensidade', location: 'São Luís de Montes Belos, GO', coords: '-16.5253, -50.3708', confirmations: 10, description: 'Satélite confirmou foco de alta radiação térmica.' }
+];
+
 
 export const brigadasMock = [
   {
