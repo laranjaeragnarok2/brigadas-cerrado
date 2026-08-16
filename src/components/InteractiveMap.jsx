@@ -33,9 +33,9 @@ const safeIcon = L.divIcon({
   iconAnchor: [15, 15]
 });
 
-// Coordenadas Padrão: Alto Paraíso / Cavalcante (Cerrado Goiano)
-const DEFAULT_CENTER = [-14.1311, -47.5218];
-const DEFAULT_ZOOM = 9;
+// Coordenadas Padrão: Estado de Goiás (Visão Geral Estadual)
+const DEFAULT_CENTER = [-15.8270, -49.8362];
+const DEFAULT_ZOOM = 7;
 
 // Componente para capturar clique no mapa
 function LocationPicker({ onSelectLocation }) {
@@ -59,14 +59,18 @@ export default function InteractiveMap({ reports = [], onSelectLocation, isPickM
       const lng = parseFloat(parts[1]);
       if (!isNaN(lat) && !isNaN(lng)) return [lat, lng];
     }
-    const offsets = [
-      [-14.1311, -47.5218],
-      [-13.7964, -47.4583],
-      [-14.2800, -47.6500],
-      [-13.9200, -47.3800]
+    // Offsets distribuídos pelas regiões do Estado de Goiás
+    const offsetsGoiás = [
+      [-14.1311, -47.5218], // Chapada dos Veadeiros / Alto Paraíso
+      [-13.7964, -47.4583], // Cavalcante / Vão de Almas (Kalunga)
+      [-15.8504, -48.9583], // Pirenópolis / Serra dos Pyreneus
+      [-17.5683, -52.5511], // Mineiros / Parque Nacional das Emas
+      [-14.4842, -46.1114], // Mambaí / Nordeste Goiano
+      [-17.7441, -48.6258]  // Caldas Novas / Serra de Caldas
     ];
-    return offsets[idx % offsets.length];
+    return offsetsGoiás[idx % offsetsGoiás.length];
   };
+
 
   return (
     <div style={{ width: '100%', height: '280px', borderRadius: '16px', overflow: 'hidden', border: '1.5px solid #E8DCCF', position: 'relative', zIndex: 1, isolation: 'isolate' }}>

@@ -10,7 +10,7 @@ export const brigadasMock = [
   {
     id: "b1",
     nome: "Geral do Moinho",
-    municipio: "Cavalcante, GO",
+    municipio: "Cavalcante, GO (Chapada)",
     estado: "GO",
     status_cor: "danger",
     status_texto: "Active Fire",
@@ -18,13 +18,13 @@ export const brigadasMock = [
     pix_chave: "pix.moinho@brigadasdocerrado.org.br",
     pix_recebedor: "Associação Brigada Geral do Moinho",
     inpe_verified: true,
-    descricao: "Currently battling a front near the state park border. Urgent need for field supplies and...",
+    descricao: "Atuando no combate a focos de encosta nas divisas do Parque Nacional da Chapada dos Veadeiros.",
     imagem: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=600&q=80"
   },
   {
     id: "b2",
     nome: "Guardiões do Kalunga",
-    municipio: "Teresina de Goiás, GO",
+    municipio: "Teresina de Goiás, GO (Quilombo)",
     estado: "GO",
     status_cor: "warning",
     status_texto: "High Risk Area",
@@ -34,13 +34,13 @@ export const brigadasMock = [
     pix_chave: "09.432.188/0001-92",
     pix_recebedor: "Associação Quilombola Kalunga",
     inpe_verified: true,
-    descricao: "Conducting preventive patrols and firebreak maintenance in highly vulnerable zones.",
+    descricao: "Rondas preventivas e manutenção de aceiros no Vão de Almas e Vão dos Moleques.",
     imagem: "https://images.unsplash.com/photo-1574689231351-85ce0d692811?auto=format&fit=crop&w=600&q=80"
   },
   {
     id: "b3",
     nome: "Brigada Aliança",
-    municipio: "Alto Paraíso, GO",
+    municipio: "Alto Paraíso de Goiás, GO",
     estado: "GO",
     status_cor: "info",
     status_texto: "Monitoring",
@@ -49,24 +49,55 @@ export const brigadasMock = [
     pix_recebedor: "Coletivo Brigada Aliança",
     inpe_verified: false,
     pending_verif: true,
-    descricao: "Focusing on education and community preparation before the peak dry season.",
+    descricao: "Educação ambiental comunitária e apoio logístico de combate no entorno dos Saltos do Rio Preto.",
     imagem: "https://images.unsplash.com/photo-1516214104703-d870798883c5?auto=format&fit=crop&w=600&q=80"
   },
   {
     id: "b4",
+    nome: "Guardiões dos Pyreneus",
+    municipio: "Pirenópolis, GO (Centro Goiano)",
+    estado: "GO",
+    status_cor: "warning",
+    status_texto: "High Risk Area",
+    tags_necessidade: ["Sopadores", "Rádios HT"],
+    meta_arrecadada: 1800,
+    meta_total: 2500,
+    pix_chave: "pyreneus.brigada@pix.org.br",
+    pix_recebedor: "Coletivo Ambientalista de Pirenópolis",
+    inpe_verified: true,
+    descricao: "Monitorando focos de calor na área do Parque Estadual dos Pyreneus e divisas com fazendas.",
+    imagem: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: "b5",
+    nome: "Brigada Parque das Emas",
+    municipio: "Mineiros, GO (Sudoeste)",
+    estado: "GO",
+    status_cor: "danger",
+    status_texto: "Active Fire",
+    tags_necessidade: ["Bombas Costais", "EPI"],
+    pix_chave: "emas.brigada@pix.org.br",
+    pix_recebedor: "Associação Brigadistas de Mineiros",
+    inpe_verified: true,
+    descricao: "Vento forte e baixa umidade no perímetro do Parque Nacional das Emas com aceiros em andamento.",
+    imagem: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: "b6",
     nome: "Brigada Sertão das Nascentes",
-    municipio: "Mambaí / Buritinópolis, GO",
+    municipio: "Mambaí, GO (Nordeste)",
     estado: "GO",
     status_cor: "success",
     status_texto: "Safe Zone",
-    tags_necessidade: ["EPI", "Cartilhas"],
+    tags_necessidade: ["Cartilhas", "Ferramentas"],
     pix_chave: "mambai.brigada@cerradovivo.org.br",
     pix_recebedor: "Brigada Voluntária de Mambaí",
     inpe_verified: true,
-    descricao: "Perímetro sob controle. Realizando mutirão de manejo integrado do fogo.",
+    descricao: "Perímetro sob controle. Realizando mutirão de manejo integrado do fogo na região das veredas.",
     imagem: "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=600&q=80"
   }
 ];
+
 
 
 export const cursosMock = [
