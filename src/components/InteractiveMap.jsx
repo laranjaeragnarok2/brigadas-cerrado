@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { MapContainer, TileLayer, WMSTileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
+import React, { useState, useEffect } from 'react';
+import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
@@ -13,35 +13,17 @@ L.Icon.Default.mergeOptions({
 
 // Coordenadas Padrão: Corredor de Goiás (Chapada, Cavalcante, Pirenópolis, Brasília, Goiânia)
 const DEFAULT_CENTER = [-14.8000, -48.5000];
-const DEFAULT_ZOOM = 7;
+const DEFAULT_ZOOM = 7.5;
 
-// Gerador dinâmico de ícones tipo pino para Leaflet
-function getMarkerIcon(type) {
-  if (type === 'danger') {
-    return L.divIcon({
-      className: 'custom-map-pin danger-pin',
-      html: '<div style="background:#C0392B; color:#FFFFFF; width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2.5px solid #FFFFFF; box-shadow:0 4px 14px rgba(192,57,43,0.7); font-size:16px; font-weight:bold;">🔥</div>',
-      iconSize: [34, 34],
-      iconAnchor: [17, 17],
-      popupAnchor: [0, -17]
-    });
-  }
-  if (type === 'warning') {
-    return L.divIcon({
-      className: 'custom-map-pin warning-pin',
-      html: '<div style="background:#D35400; color:#FFFFFF; width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2.5px solid #FFFFFF; box-shadow:0 4px 14px rgba(211,84,0,0.7); font-size:16px; font-weight:bold;">💨</div>',
-      iconSize: [34, 34],
-      iconAnchor: [17, 17],
-      popupAnchor: [0, -17]
-    });
-  }
-  return L.divIcon({
-    className: 'custom-map-pin success-pin',
-    html: '<div style="background:#27AE60; color:#FFFFFF; width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2.5px solid #FFFFFF; box-shadow:0 4px 14px rgba(39,174,96,0.7); font-size:16px; font-weight:bold;">✅</div>',
-    iconSize: [34, 34],
-    iconAnchor: [17, 17],
-    popupAnchor: [0, -17]
-  });
+// Componente para forçar o enquadramento de visão do Leaflet
+function MapController({ center, zoom }) {
+  const map = useMap();
+  useEffect(() => {
+    if (center && map) {
+      map.setView(center, zoom);
+    }
+  }, [center, zoom, map]);
+  return null;
 }
 
 // Componente para capturar clique no mapa
@@ -56,6 +38,24 @@ function LocationPicker({ onSelectLocation }) {
   return null;
 }
 
+// Gerador dinâmico de ícones tipo pino para Leaflet (com inline styles à prova de falhas)
+function getMarkerIcon(type) {
+  const isDanger = type === 'danger';
+  const isWarning = type === 'warning';
+
+  const emoji = isDanger ? '🔥' : isWarning ? '💨' : '✅';
+  const bg = isDanger ? '#C0392B' : isWarning ? '#D35400' : '#27AE60';
+  const shadow = isDanger ? 'rgba(192,57,43,0.8)' : isWarning ? 'rgba(211,84,0,0.8)' : 'rgba(39,174,96,0.8)';
+
+  return L.divIcon({
+    className: 'clean-map-pin',
+    html: `<div style="background:${bg}; color:#FFFFFF; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2.5px solid #FFFFFF; box-shadow:0 4px 14px ${shadow}; font-size:18px; font-weight:bold; cursor:pointer;">${emoji}</div>`,
+    iconSize: [36, 36],
+    iconAnchor: [18, 18],
+    popupAnchor: [0, -18]
+  });
+}
+
 export default function InteractiveMap({ reports = [], onSelectLocation, isPickMode = false }) {
   const [mapCenter] = useState(DEFAULT_CENTER);
 
@@ -66,7 +66,6 @@ export default function InteractiveMap({ reports = [], onSelectLocation, isPickM
       const lng = parseFloat(parts[1].trim());
       if (!isNaN(lat) && !isNaN(lng)) return [lat, lng];
     }
-    // Offsets distribuídos pelas regiões do Estado de Goiás
     const offsetsGoiás = [
       [-14.1311, -47.5218], // Chapada dos Veadeiros / Alto Paraíso
       [-13.7964, -47.4583], // Cavalcante / Vão de Almas (Kalunga)
@@ -96,35 +95,17 @@ export default function InteractiveMap({ reports = [], onSelectLocation, isPickM
         style={{ width: '100%', height: '100%', zIndex: 1 }}
         scrollWheelZoom={false}
       >
+        <MapController center={mapCenter} zoom={DEFAULT_ZOOM} />
+
         {/* Mapa Base: Esri World Imagery (Satélite Real Alta Resolução) */}
         <TileLayer
           attribution='&copy; <a href="https://www.esri.com/">Esri World Imagery</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
         />
 
-        {/* Camada Vetorial de Divisas, Estradas e Nomes de Cidades (Estilo GeaMap GIS Pro) */}
+        {/* Camada Vetorial de Divisas, Estradas e Nomes de Cidades (Esri GIS Pro) */}
         <TileLayer
           url="https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}"
-        />
-
-        {/* Camada WMS do GeoServer INPE TerraBrasilis para Bioma Cerrado */}
-        <WMSTileLayer
-          url="https://terrabrasilis.dpi.inpe.br/geoserver/wms"
-          layers="prodes-cerrado-nb:accumulated_deforestation_2000"
-          format="image/png"
-          transparent={true}
-          opacity={0.35}
-          attribution="INPE / TerraBrasilis"
-        />
-
-        {/* Camada WMS do CENSIPAM Painel do Fogo (Territórios Protegidos & Quilombolas) */}
-        <WMSTileLayer
-          url="https://panorama.sipam.gov.br/geoserver/wms"
-          layers="painel_do_fogo:area_quilombola"
-          format="image/png"
-          transparent={true}
-          opacity={0.4}
-          attribution="CENSIPAM / Painel do Fogo"
         />
 
         {isPickMode && <LocationPicker onSelectLocation={onSelectLocation} />}
@@ -168,6 +149,7 @@ export default function InteractiveMap({ reports = [], onSelectLocation, isPickM
     </div>
   );
 }
+
 
 
 
