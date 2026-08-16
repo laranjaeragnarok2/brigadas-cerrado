@@ -1,217 +1,159 @@
-import React, { useState, useEffect } from 'react';
-import { emergenciaMock } from '../data/mockData';
-import { PhoneCall, ShieldAlert, WifiOff, MapPin, Navigation, Copy, Check, AlertTriangle, Compass, ShieldCheck } from 'lucide-react';
+import React, { useState } from 'react';
+import { AlertTriangle, X, Copy, Navigation, Phone, Flame, Trees, Shield, Wind, Footprints, Megaphone } from 'lucide-react';
 
-export default function EmergencyView() {
-  const [gpsCoords, setGpsCoords] = useState(null);
-  const [isGettingGps, setIsGettingGps] = useState(false);
-  const [copiedCoords, setCopiedCoords] = useState(false);
+export default function EmergencyView({ onNavigate }) {
+  const [coords, setCoords] = useState({ lat: '-15.7938', lng: '-47.8827' });
+  const [copied, setCopied] = useState(false);
 
-  const handleGetGps = () => {
-    setIsGettingGps(true);
-    if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setGpsCoords({
-            lat: position.coords.latitude.toFixed(5),
-            lng: position.coords.longitude.toFixed(5)
-          });
-          setIsGettingGps(false);
-        },
-        (error) => {
-          console.warn("GPS error:", error);
-          alert("Ative a localização do seu celular para capturar as coordenadas exatas.");
-          setIsGettingGps(false);
-        },
-        { timeout: 10000, enableHighAccuracy: true }
-      );
-    } else {
-      alert("Navegador não suporta captura automática de GPS.");
-      setIsGettingGps(false);
-    }
+  const handleCopy = () => {
+    navigator.clipboard.writeText(`${coords.lat}, ${coords.lng}`);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleCopyGps = () => {
-    if (gpsCoords) {
-      const text = `SOCORRO/FOGO - Minhas Coordenadas GPS: ${gpsCoords.lat}, ${gpsCoords.lng} (Bioma Cerrado)`;
-      navigator.clipboard.writeText(text).then(() => {
-        setCopiedCoords(true);
-        setTimeout(() => setCopiedCoords(false), 3000);
-      });
+  const handleUpdateGps = () => {
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          setCoords({
+            lat: pos.coords.latitude.toFixed(4),
+            lng: pos.coords.longitude.toFixed(4)
+          });
+        },
+        () => {},
+        { timeout: 5000 }
+      );
     }
   };
 
   return (
     <div className="page-container">
-      {/* Indicador de Funcionamento Offline */}
-      <div className="section-card" style={{ background: '#F5EFE6', borderLeftColor: '#A66844', marginBottom: '20px', padding: '14px 18px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <WifiOff size={22} color="#593122" style={{ flexShrink: 0 }} />
-          <div>
-            <h4 style={{ fontSize: '0.92rem', color: '#593122', margin: 0, fontWeight: 700 }}>
-              Modo de Emergência (Salvo Offline)
-            </h4>
-            <p style={{ fontSize: '0.8rem', color: '#6B4D3E', margin: 0, lineHeight: 1.35 }}>
-              Estes telefones e ferramentas funcionam <strong>mesmo sem sinal de internet ou dados</strong>.
-            </p>
-          </div>
+      {/* Header com Ícone de Alerta e X */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#C0392B' }}>
+          <AlertTriangle size={24} color="#C0392B" />
+          <h2 style={{ fontSize: '1.4rem', color: '#C0392B', margin: 0 }}>Emergência</h2>
         </div>
+        <button
+          onClick={() => onNavigate('/')}
+          style={{ background: 'transparent', border: 'none', color: '#735C50', cursor: 'pointer' }}
+          aria-label="Fechar"
+        >
+          <X size={24} />
+        </button>
       </div>
 
-      <div style={{ marginBottom: '20px' }}>
-        <h1 style={{ fontSize: '1.6rem', color: '#593122', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <PhoneCall color="#A66844" size={26} />
-          Central de Emergência & Socorro
-        </h1>
-        <p style={{ color: '#6B4D3E', fontSize: '0.9rem' }}>
-          Ligue imediatamente ao identificar foco de incêndio sem controle próximo a serra ou propriedades.
-        </p>
-      </div>
+      {/* Card 1: Localização Atual Vermelho */}
+      <div className="emergency-red-card">
+        <div className="emergency-red-title">Localização Atual</div>
+        <div className="emergency-red-sub">Sua posição exata para resgate.</div>
 
-      {/* FERRAMENTA 1: COPIAR MINHA LOCALIZAÇÃO GPS EM 1 CLIQUE */}
-      <div className="section-card" style={{ background: '#FFF', borderLeftColor: '#593122', marginBottom: '24px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px', flexWrap: 'wrap', gap: '8px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Compass size={22} color="#A66844" />
-            <h3 style={{ fontSize: '1.05rem', color: '#261914', margin: 0 }}>
-              Sua Posição GPS para Informar aos Bombeiros
-            </h3>
+        <div className="coords-copy-box">
+          <div style={{ textAlign: 'left' }}>
+            <div style={{ fontSize: '0.68rem', fontWeight: 800, color: '#735C50' }}>LAT / LONG</div>
+            <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#362219', fontFamily: 'monospace' }}>
+              {coords.lat}, {coords.lng}
+            </div>
           </div>
-
-          <button
-            onClick={handleGetGps}
-            style={{
-              background: '#593122',
-              color: '#FFF',
-              padding: '8px 16px',
-              borderRadius: 'var(--md-shape-corner-medium)',
-              fontSize: '0.85rem',
-              fontWeight: 700,
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              border: 'none',
-              cursor: 'pointer'
-            }}
-          >
-            <Navigation size={14} className={isGettingGps ? 'spin' : ''} />
-            {isGettingGps ? 'Capturando GPS...' : 'Capturar Meu GPS'}
+          <button onClick={handleCopy} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#8C4526' }}>
+            <Copy size={20} />
           </button>
         </div>
 
-        {gpsCoords ? (
-          <div style={{ background: '#F7EFE9', padding: '14px', borderRadius: 'var(--md-shape-corner-medium)', border: '1px solid #EAD8CC', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
-            <div>
-              <div style={{ fontSize: '0.75rem', color: '#6B4D3E', fontWeight: 700, textTransform: 'uppercase' }}>Coordenadas Exatas:</div>
-              <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#593122', fontFamily: 'monospace' }}>
-                Lat: {gpsCoords.lat} | Lng: {gpsCoords.lng}
-              </div>
-            </div>
-
-            <button
-              onClick={handleCopyGps}
-              style={{
-                background: copiedCoords ? '#2D6A4F' : '#A66844',
-                color: '#FFF',
-                padding: '8px 16px',
-                borderRadius: 'var(--md-shape-corner-small)',
-                fontSize: '0.82rem',
-                fontWeight: 700,
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                border: 'none',
-                cursor: 'pointer'
-              }}
-            >
-              {copiedCoords ? <Check size={16} /> : <Copy size={16} />}
-              {copiedCoords ? 'Coordenadas Copiadas!' : 'Copiar Texto para Enviar'}
-            </button>
-          </div>
-        ) : (
-          <p style={{ fontSize: '0.85rem', color: '#6B4D3E', margin: 0 }}>
-            Clique em <strong>"Capturar Meu GPS"</strong> para gerar as coordenadas de latitude e longitude exatas e repassar aos bombeiros via ligação ou WhatsApp.
-          </p>
-        )}
+        <button className="btn-update-gps-red" onClick={handleUpdateGps}>
+          <Navigation size={16} /> Atualizar GPS
+        </button>
       </div>
 
-      {/* FERRAMENTA 2: CARTÕES DE DISCAGEM RÁPIDA (BOMBEIROS 193 & PREVFOGO) */}
-      <h2 style={{ fontSize: '1.15rem', color: '#593122', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <PhoneCall size={18} color="#A66844" />
-        Ligar para o Socorro Oficial
-      </h2>
+      {/* Card 2: Contatos de Emergência */}
+      <h3 style={{ fontSize: '1.1rem', color: '#362219', marginBottom: '12px' }}>Contatos de Emergência</h3>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '28px' }}>
-        {emergenciaMock.map((contato) => (
-          <div 
-            key={contato.id} 
-            className="emergency-card"
-            style={{
-              padding: '18px',
-              borderRadius: 'var(--md-shape-corner-large)',
-              boxShadow: 'var(--md-elevation-1)',
-              border: '1px solid var(--md-sys-color-outline-variant)'
-            }}
-          >
-            <div className="emergency-info" style={{ flexGrow: 1 }}>
-              <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#A66844', textTransform: 'uppercase', marginBottom: '3px' }}>
-                {contato.tipo}
-              </div>
-              <h4 style={{ fontSize: '1.05rem', color: '#261914', marginBottom: '4px', fontWeight: 800 }}>{contato.nome}</h4>
-              <p style={{ fontSize: '0.85rem', color: '#6B4D3E', margin: 0, lineHeight: 1.4 }}>{contato.descricao}</p>
-            </div>
-
-            <a 
-              href={`tel:${contato.numero.replace(/[^0-9]/g, '')}`} 
-              className="btn-call"
-              style={{
-                background: contato.numero === '193' ? '#A93226' : '#593122',
-                padding: '12px 20px',
-                borderRadius: 'var(--md-shape-corner-extra-large)',
-                boxShadow: 'var(--md-elevation-2)',
-                whiteSpace: 'nowrap'
-              }}
-            >
-              <PhoneCall size={18} />
-              Ligar {contato.numero}
-            </a>
+      <div className="emergency-contact-card">
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div className="contact-icon-circle red">
+            <Flame size={20} />
           </div>
-        ))}
+          <div>
+            <strong style={{ fontSize: '1rem', color: '#362219', display: 'block' }}>193 Bombeiros</strong>
+            <span style={{ fontSize: '0.78rem', color: '#735C50' }}>Fogo em área urbana/vegetação</span>
+          </div>
+        </div>
+        <a href="tel:193" style={{ color: '#362219' }}>
+          <Phone size={20} />
+        </a>
       </div>
 
-      {/* FERRAMENTA 3: PROTOCOLO VISUAL PASSO A PASSO EM CASO DE INCÊNDIO */}
-      <div className="section-card" style={{ borderLeftColor: '#A66844', background: '#F5EFE6' }}>
-        <h3 style={{ fontSize: '1.1rem', color: '#593122', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <AlertTriangle color="#A66844" size={20} />
-          O Que Fazer ao Encontrar Fogo na Serra (3 Passos)
-        </h3>
-
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '12px' }}>
-          <div style={{ background: '#FFF', padding: '14px', borderRadius: 'var(--md-shape-corner-medium)', border: '1px solid #E5DDD3' }}>
-            <div style={{ fontSize: '0.8rem', fontWeight: 800, color: '#A66844', marginBottom: '4px' }}>PASSO 1</div>
-            <strong style={{ color: '#261914', fontSize: '0.9rem', display: 'block', marginBottom: '4px' }}>Avalie a Direção do Vento</strong>
-            <p style={{ fontSize: '0.8rem', color: '#6B4D3E', margin: 0, lineHeight: 1.4 }}>
-              Nunca corra morro acima nem fique no caminho fumaça. O fogo no Cerrado sobe muito rápido.
-            </p>
+      <div className="emergency-contact-card">
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div className="contact-icon-circle brown">
+            <Trees size={20} />
           </div>
-
-          <div style={{ background: '#FFF', padding: '14px', borderRadius: 'var(--md-shape-corner-medium)', border: '1px solid #E5DDD3' }}>
-            <div style={{ fontSize: '0.8rem', fontWeight: 800, color: '#A66844', marginBottom: '4px' }}>PASSO 2</div>
-            <strong style={{ color: '#261914', fontSize: '0.9rem', display: 'block', marginBottom: '4px' }}>Busque Áreas de Fuga</strong>
-            <p style={{ fontSize: '0.8rem', color: '#6B4D3E', margin: 0, lineHeight: 1.4 }}>
-              Procure a "área preta" (já queimada) ou estradas e rios largos onde o fogo não consiga atravessar.
-            </p>
+          <div>
+            <strong style={{ fontSize: '1rem', color: '#362219', display: 'block' }}>Prevfogo IBAMA</strong>
+            <span style={{ fontSize: '0.78rem', color: '#735C50' }}>Incêndios florestais / federais</span>
           </div>
+        </div>
+        <a href="tel:0800618080" style={{ color: '#362219' }}>
+          <Phone size={20} />
+        </a>
+      </div>
 
-          <div style={{ background: '#FFF', padding: '14px', borderRadius: 'var(--md-shape-corner-medium)', border: '1px solid #E5DDD3' }}>
-            <div style={{ fontSize: '0.8rem', fontWeight: 800, color: '#A66844', marginBottom: '4px' }}>PASSO 3</div>
-            <strong style={{ color: '#261914', fontSize: '0.9rem', display: 'block', marginBottom: '4px' }}>Repasse as Coordenadas</strong>
-            <p style={{ fontSize: '0.8rem', color: '#6B4D3E', margin: 0, lineHeight: 1.4 }}>
-              Copie seu GPS nesta tela e envie para os Bombeiros 193 ou para o WhatsApp da brigada local.
-            </p>
+      <div className="emergency-contact-card">
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div className="contact-icon-circle orange">
+            <Shield size={20} />
+          </div>
+          <div>
+            <strong style={{ fontSize: '1rem', color: '#362219', display: 'block' }}>199 Defesa Civil</strong>
+            <span style={{ fontSize: '0.78rem', color: '#735C50' }}>Desastres e evacuação</span>
+          </div>
+        </div>
+        <a href="tel:199" style={{ color: '#362219' }}>
+          <Phone size={20} />
+        </a>
+      </div>
+
+      {/* Card 3: Protocolo de Segurança (Timeline / Stepper) */}
+      <h3 style={{ fontSize: '1.1rem', color: '#362219', marginTop: '20px', marginBottom: '10px' }}>Protocolo de Segurança</h3>
+
+      <div className="stepper-container">
+        <div className="stepper-step">
+          <div className="stepper-icon-circle">
+            <Wind size={18} />
+          </div>
+          <div>
+            <div className="stepper-content-title">1. Avalie o Vento</div>
+            <div className="stepper-content-desc">
+              Nunca fuja na mesma direção do vento. O fogo viaja mais rápido do que você.
+            </div>
+          </div>
+        </div>
+
+        <div className="stepper-step">
+          <div className="stepper-icon-circle">
+            <Footprints size={18} />
+          </div>
+          <div>
+            <div className="stepper-content-title">2. Busque "Áreas Pretas"</div>
+            <div className="stepper-content-desc">
+              Mova-se para áreas já queimadas (sem vegetação) ou corpos d'água grandes.
+            </div>
+          </div>
+        </div>
+
+        <div className="stepper-step">
+          <div className="stepper-icon-circle">
+            <Megaphone size={18} />
+          </div>
+          <div>
+            <div className="stepper-content-title">3. Sinalize e Aguarde</div>
+            <div className="stepper-content-desc">
+              Ligue para o resgate informando as coordenadas acima e mantenha-se visível.
+            </div>
           </div>
         </div>
       </div>
     </div>
   );
 }
+

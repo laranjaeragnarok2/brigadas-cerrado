@@ -1,30 +1,34 @@
 import React from 'react';
-import { Home, Shield, GraduationCap, Users, PhoneCall } from 'lucide-react';
+import { Eye, Users, HeartHandshake, User } from 'lucide-react';
 
 export default function BottomNavigation({ currentPath, onNavigate }) {
   const navItems = [
-    { id: '/', label: 'Home', icon: Home },
-    { id: '/brigadas', label: 'Brigadas', icon: Shield },
-    { id: '/formacao', label: 'Formação', icon: GraduationCap },
-    { id: '/voluntariado', label: 'Voluntariado', icon: Users },
-    { id: '/emergencia', label: 'Emergência', icon: PhoneCall, isEmergency: true },
+    { id: '/', label: 'Monitor', icon: Eye },
+    { id: '/brigadas', label: 'Brigades', icon: Users },
+    { id: '/voluntariado', label: 'Donate', icon: HeartHandshake },
+    { id: '/perfil', label: 'Profile', icon: User },
   ];
 
   return (
     <nav className="bottom-nav">
       {navItems.map((item) => {
         const IconComponent = item.icon;
-        const isActive = currentPath === item.id;
-        const extraClass = item.isEmergency ? 'emergency-nav' : '';
+        const isActive = currentPath === item.id || (item.id === '/' && currentPath === '');
 
         return (
           <button
             key={item.id}
-            className={`nav-item ${isActive ? 'active' : ''} ${extraClass}`}
+            className={`nav-item ${isActive ? 'active' : ''}`}
             onClick={() => onNavigate(item.id)}
             aria-label={`Navegar para ${item.label}`}
           >
-            <IconComponent size={20} color={isActive ? (item.isEmergency ? '#900C3F' : '#D35400') : '#64748B'} />
+            {isActive ? (
+              <div className="nav-pill-active">
+                <IconComponent size={20} color="#8C4526" />
+              </div>
+            ) : (
+              <IconComponent size={20} color="#735C50" />
+            )}
             <span>{item.label}</span>
           </button>
         );
@@ -32,3 +36,4 @@ export default function BottomNavigation({ currentPath, onNavigate }) {
     </nav>
   );
 }
+

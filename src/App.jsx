@@ -3,7 +3,7 @@ import Header from './components/Header';
 import BottomNavigation from './components/BottomNavigation';
 import DonationModal from './components/DonationModal';
 import ReportFireModal from './components/ReportFireModal';
-import { Flame } from 'lucide-react';
+import { fetchRelatosFogo, saveRelatoFogo } from './data/apiService';
 
 import DashboardView from './views/DashboardView';
 import BrigadesListView from './views/BrigadesListView';
@@ -17,7 +17,7 @@ export default function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
 
-  // Controle de Confirmações Únicas por Usuário (Impede joinhas infinitos)
+  // Controle de Confirmações Únicas por Usuário
   const [confirmedReportIds, setConfirmedReportIds] = useState(() => {
     try {
       const saved = localStorage.getItem('cerrado_confirmed_reports');
@@ -27,7 +27,7 @@ export default function App() {
     }
   });
 
-  // Relatos da Comunidade (Mapeamento Waze Cerrado)
+  // Relatos da Comunidade (Mapeamento Waze Cerrado) Sincronizados com Supabase
   const [communityReports, setCommunityReports] = useState([
     {
       id: 'rep_1',
@@ -35,9 +35,9 @@ export default function App() {
       title: 'Fogo Ativo em Encosta de Serra',
       location: 'Alto Paraíso de Goiás (GO-237 km 14)',
       coords: '-14.1311, -47.5218',
-      description: 'Chamas avançando rápido na vegetação baixa da serra. Tropa de solo acionada.',
+      description: 'Chamas avançando rápido na vegetação baixa da serra.',
       confirmations: 6,
-      time: 'Há 12 minutos (Verificado por Satélite + 6 Moradores)'
+      time: 'Há 12 minutos (Verificado + Moradores)'
     },
     {
       id: 'rep_2',
@@ -45,11 +45,36 @@ export default function App() {
       title: 'Coluna de Fumaça Espessa',
       location: 'Cavalcante - Limite Quilombo Kalunga',
       coords: '-13.7964, -47.4583',
-      description: 'Fumaça branca densa subindo do vale. Equipe Kalunga em checagem.',
+      description: 'Fumaça branca densa subindo do vale.',
       confirmations: 4,
-      time: 'Há 45 minutos (Em checagem pela Brigada Kalunga)'
+      time: 'Há 45 minutos (Em checagem)'
     }
   ]);
+
+  // Carregar relatos do Supabase ao iniciar
+  useEffect(() => {
+    async function loadDataFromSupabase() {
+      try {
+        const dbReports = await fetchRelatosFogo();
+        if (dbReports && dbReports.length > 0) {
+          const formatted = dbReports.map(rep => ({
+            id: rep.id,
+            type: rep.tipo || 'danger',
+            title: rep.titulo || 'Alerta de Fogo',
+            location: rep.localizacao || 'Cerrado Goiano',
+            coords: rep.coordenadas || '-14.1311, -47.5218',
+            description: rep.descricao || 'Relato registrado no banco.',
+            confirmations: rep.confirmacoes || 1,
+            time: 'Ao Vivo via Supabase'
+          }));
+          setCommunityReports(prev => [...formatted, ...prev]);
+        }
+      } catch (e) {
+        console.warn("Conexão Supabase fallback local:", e);
+      }
+    }
+    loadDataFromSupabase();
+  }, []);
 
   const navigateTo = (path) => {
     setCurrentPath(path);
@@ -75,9 +100,16 @@ export default function App() {
     setSelectedBrigade(null);
   };
 
-  const handleAddReport = (newReport) => {
+  const handleAddReport = async (newReport) => {
     setCommunityReports(prev => [newReport, ...prev]);
+    // Salvar diretamente no banco do Supabase
+    try {
+      await saveRelatoFogo(newReport);
+    } catch (err) {
+      console.warn("Erro ao enviar para Supabase:", err);
+    }
   };
+
 
   // Trava de Voto Único: Adiciona ou remove o voto sem permitir spam infinito
   const handleConfirmReport = (reportId) => {
@@ -120,9 +152,12 @@ export default function App() {
       case '/formacao':
         return <EducationView />;
       case '/voluntariado':
+      case '/doar':
         return <VolunteerFormView />;
       case '/emergencia':
-        return <EmergencyView />;
+        return <EmergencyView onNavigate={navigateTo} />;
+      case '/perfil':
+        return <VolunteerFormView />;
       case '/':
       default:
         return (
@@ -146,19 +181,6 @@ export default function App() {
         {renderCurrentView()}
       </main>
 
-      {/* Floating Action Button para Reportar Fogo */}
-      <div className="fab-report-container">
-        <div className="fab-report-label">Avistou Fogo ou Fumaça?</div>
-        <button
-          className="btn-report-super"
-          onClick={() => setIsReportModalOpen(true)}
-          aria-label="Reportar Foco de Fogo"
-        >
-          <Flame size={20} color="#FFF" fill="#FFF" />
-          <span>REPORTAR FOCO DE FOGO</span>
-        </button>
-      </div>
-
       <BottomNavigation currentPath={currentPath} onNavigate={navigateTo} />
 
       <DonationModal
@@ -175,3 +197,4 @@ export default function App() {
     </div>
   );
 }
+

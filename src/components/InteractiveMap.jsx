@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
+import { MapContainer, TileLayer, WMSTileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
@@ -37,7 +37,7 @@ const safeIcon = L.divIcon({
 const DEFAULT_CENTER = [-14.1311, -47.5218];
 const DEFAULT_ZOOM = 9;
 
-// Componente para capturar clique no mapa (caso usuário queira escolher o ponto)
+// Componente para capturar clique no mapa
 function LocationPicker({ onSelectLocation }) {
   useMapEvents({
     click(e) {
@@ -49,7 +49,7 @@ function LocationPicker({ onSelectLocation }) {
   return null;
 }
 
-export default function InteractiveMap({ reports = [], onSelectLocation, selectedCoords, isPickMode = false }) {
+export default function InteractiveMap({ reports = [], onSelectLocation, isPickMode = false }) {
   const [mapCenter] = useState(DEFAULT_CENTER);
 
   const getCoordsForReport = (rep, idx) => {
@@ -69,16 +69,27 @@ export default function InteractiveMap({ reports = [], onSelectLocation, selecte
   };
 
   return (
-    <div style={{ width: '100%', height: '280px', borderRadius: 'var(--md-shape-corner-medium)', overflow: 'hidden', border: '1px solid #D4C7B8', position: 'relative', zIndex: 1, isolation: 'isolate' }}>
+    <div style={{ width: '100%', height: '280px', borderRadius: '16px', overflow: 'hidden', border: '1.5px solid #E8DCCF', position: 'relative', zIndex: 1, isolation: 'isolate' }}>
       <MapContainer
         center={mapCenter}
         zoom={DEFAULT_ZOOM}
         style={{ width: '100%', height: '100%', zIndex: 1 }}
         scrollWheelZoom={false}
       >
+        {/* Mapa Base: Esri World Imagery (Satélite Real) */}
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://www.esri.com/">Esri World Imagery</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+          url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+        />
+
+        {/* Camada WMS do GeoServer INPE TerraBrasilis para Bioma Cerrado */}
+        <WMSTileLayer
+          url="https://terrabrasilis.dpi.inpe.br/geoserver/wms"
+          layers="prodes-cerrado-nb:accumulated_deforestation_2000"
+          format="image/png"
+          transparent={true}
+          opacity={0.4}
+          attribution="INPE / TerraBrasilis"
         />
 
         {isPickMode && <LocationPicker onSelectLocation={onSelectLocation} />}
@@ -92,19 +103,19 @@ export default function InteractiveMap({ reports = [], onSelectLocation, selecte
             <Marker key={rep.id || idx} position={pos} icon={icon}>
               <Popup>
                 <div style={{ fontSize: '0.85rem', fontFamily: 'sans-serif' }}>
-                  <strong style={{ color: '#593122', fontSize: '0.9rem', display: 'block', marginBottom: '2px' }}>
+                  <strong style={{ color: '#8C4526', fontSize: '0.9rem', display: 'block', marginBottom: '2px' }}>
                     {rep.title}
                   </strong>
-                  <div style={{ color: '#A66844', fontWeight: 'bold', marginBottom: '4px' }}>
+                  <div style={{ color: '#A65937', fontWeight: 'bold', marginBottom: '4px' }}>
                     📍 {rep.location}
                   </div>
-                  <p style={{ margin: '4px 0', fontSize: '0.8rem', color: '#56645D' }}>
+                  <p style={{ margin: '4px 0', fontSize: '0.8rem', color: '#55443A' }}>
                     {rep.description || 'Alerta transmitido por morador.'}
                   </p>
                   {rep.photo && (
                     <img src={rep.photo} alt="Foto" style={{ width: '100%', height: '80px', objectFit: 'cover', borderRadius: '4px', marginTop: '4px' }} />
                   )}
-                  <div style={{ fontSize: '0.75rem', color: '#1B2E24', fontWeight: 'bold', marginTop: '6px' }}>
+                  <div style={{ fontSize: '0.75rem', color: '#27AE60', fontWeight: 'bold', marginTop: '6px' }}>
                     👍 Confirmado por {rep.confirmations} moradores
                   </div>
                 </div>
@@ -122,3 +133,4 @@ export default function InteractiveMap({ reports = [], onSelectLocation, selecte
     </div>
   );
 }
+
