@@ -76,21 +76,40 @@ export async function saveRelatoFogo(relato) {
 }
 
 /**
- * 5. Consulta Satélites INPE (BDQueimadas API Gratuita)
+ * 5. Salva novo cadastro de Voluntário no Supabase (Tabela "voluntarios")
  */
-export async function fetchINPEFocos() {
+export async function saveVoluntario(voluntario) {
+  return await supabaseFetch('voluntarios', {
+    method: 'POST',
+    body: JSON.stringify({
+      nome: voluntario.nome,
+      email: voluntario.email,
+      whatsapp: voluntario.whatsapp,
+      cidade: voluntario.cidade,
+      disponibilidade: voluntario.disponibilidade,
+      habilidades: voluntario.habilidades
+    })
+  });
+}
+
+/**
+ * 6. Consulta Estatísticas Globais Dinâmicas do Banco
+ */
+export async function fetchEstatisticas() {
   try {
-    const response = await fetch('https://queimadas.dgi.inpe.br/api/focos/?bioma=Cerrado&limite=50');
-    if (!response.ok) throw new Error('Falha ao conectar à API do INPE');
-    const focos = await response.json();
+    const relatos = await fetchRelatosFogo();
+    const brigadas = await fetchBrigadas();
+    
+    const focosContagem = (relatos && relatos.length > 0) ? relatos.length : estatisticasGlobais.focosAtivos;
+    const brigadasContagem = (brigadas && brigadas.length > 0) ? brigadas.length : estatisticasGlobais.brigadasAtivas;
+
     return {
-      focosAtivosCount: focos.length || 14,
-      focosLista: focos
+      focosAtivos: focosContagem,
+      hectaresProtegidos: estatisticasGlobais.hectaresProtegidos,
+      brigadasAtivas: brigadasContagem
     };
-  } catch (error) {
-    return {
-      focosAtivosCount: estatisticasGlobais.focosAtivos,
-      focosLista: []
-    };
+  } catch (err) {
+    return estatisticasGlobais;
   }
 }
+

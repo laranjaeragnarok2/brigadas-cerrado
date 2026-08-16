@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { Users, Send, CheckCircle2, AlertCircle, Loader2, Sparkles } from 'lucide-react';
+import { saveVoluntario } from '../data/apiService';
 
 export default function VolunteerFormView() {
   const [formData, setFormData] = useState({
     nome: '',
     email: '',
     whatsapp: '',
-    cidadeUf: '',
-    areaInteresse: 'gis',
+    cidade: '',
+    habilidade: 'gis',
     disponibilidade: 'semanal',
     mensagem: ''
   });
@@ -21,184 +22,207 @@ export default function VolunteerFormView() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setIsError(false);
 
-    // Simulate Webhook POST Request (e.g. to Zapier / Make webhook endpoint)
-    setTimeout(() => {
-      // Simulate successful POST response
-      if (formData.nome && formData.email) {
-        setIsLoading(false);
-        setIsSuccess(true);
-      } else {
-        setIsLoading(false);
-        setIsError(true);
-      }
-    }, 1200);
+    try {
+      await saveVoluntario({
+        nome: formData.nome,
+        email: formData.email,
+        whatsapp: formData.whatsapp,
+        cidade: formData.cidade,
+        disponibilidade: formData.disponibilidade,
+        habilidades: [formData.habilidade, formData.mensagem].filter(Boolean)
+      });
+      setIsLoading(false);
+      setIsSuccess(true);
+    } catch (err) {
+      console.warn("Erro ao cadastrar voluntário:", err);
+      setIsLoading(false);
+      setIsError(true);
+    }
   };
 
   return (
     <div className="page-container">
-      <div style={{ marginBottom: '24px' }}>
-        <h1 style={{ fontSize: '1.75rem', color: '#2C3E50', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <Users color="#D35400" size={32} />
+      <div style={{ marginBottom: '20px' }}>
+        <h1 style={{ fontSize: '1.5rem', color: '#362219', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Users color="#8C4526" size={28} />
           Voluntariado Remoto
         </h1>
-        <p style={{ color: '#64748B', fontSize: '0.95rem' }}>
-          Apoie o combate ao fogo no Cerrado de onde estiver. Precisamos de habilidades em tecnologia, mapas, redes sociais, comunicação e design.
+        <p style={{ color: '#735C50', fontSize: '0.88rem', lineHeight: 1.4 }}>
+          Apoie o combate ao fogo no Cerrado de onde estiver. Precisamos de habilidades em tecnologia, mapas, redes sociais, comunicação e apoio logístico.
         </p>
       </div>
 
       {isSuccess ? (
-        <div className="section-card" style={{ borderLeftColor: '#27AE60', background: '#F0FDF4', padding: '32px', textAlign: 'center' }}>
+        <div style={{ background: '#FFFFFF', borderRadius: '16px', border: '2px solid #27AE60', padding: '28px', textAlign: 'center' }}>
           <CheckCircle2 size={48} color="#27AE60" style={{ marginBottom: '12px' }} />
-          <h2 style={{ color: '#166534', marginBottom: '8px' }}>Cadastro de Voluntário Recebido!</h2>
-          <p style={{ color: '#15803D', fontSize: '0.95rem', marginBottom: '20px', lineHeight: 1.5 }}>
-            Obrigado, <strong>{formData.nome}</strong>! Seus dados foram enviados com sucesso via Webhook para nossa equipe de coordenação. Entraremos em contato via WhatsApp/E-mail em breve.
+          <h2 style={{ color: '#27AE60', marginBottom: '8px', fontSize: '1.3rem' }}>Inscrição Concluída com Sucesso!</h2>
+          <p style={{ color: '#362219', fontSize: '0.88rem', marginBottom: '20px', lineHeight: 1.5 }}>
+            Obrigado, <strong>{formData.nome}</strong>! Seus dados foram cadastrados com sucesso no CerradoVigil. Nossa equipe entrará em contato via WhatsApp/E-mail.
           </p>
           <button
-            className="btn-apoiar"
-            style={{ width: 'auto', margin: '0 auto', background: '#27AE60' }}
             onClick={() => {
               setIsSuccess(false);
-              setFormData({ nome: '', email: '', whatsapp: '', cidadeUf: '', areaInteresse: 'gis', disponibilidade: 'semanal', mensagem: '' });
+              setFormData({ nome: '', email: '', whatsapp: '', cidade: '', habilidade: 'gis', disponibilidade: 'semanal', mensagem: '' });
             }}
+            style={{ background: '#8C4526', color: '#FFFFFF', padding: '10px 20px', borderRadius: '12px', fontWeight: 800, border: 'none', cursor: 'pointer' }}
           >
             Cadastrar Outro Voluntário
           </button>
         </div>
       ) : (
-        <div className="section-card" style={{ borderLeftColor: '#D35400' }}>
+        <div style={{ background: '#FFFFFF', borderRadius: '16px', border: '1.5px solid #E8DCCF', padding: '20px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-            <Sparkles color="#D35400" size={20} />
-            <h3 style={{ fontSize: '1.1rem', color: '#2C3E50', margin: 0 }}>Formulário de Inscrição de Apoio Remoto</h3>
+            <Sparkles color="#8C4526" size={18} />
+            <h3 style={{ fontSize: '1.05rem', color: '#362219', margin: 0 }}>Formulário de Apoio Remoto</h3>
           </div>
 
           {isError && (
-            <div style={{ background: '#FEF2F2', borderLeft: '4px solid #EF4444', padding: '12px', borderRadius: 'var(--radius-sm)', marginBottom: '16px', color: '#991B1B', fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <AlertCircle size={16} color="#EF4444" />
-              <span>Ocorreu uma falha ao disparar o Webhook. Verifique os campos e tente novamente.</span>
+            <div style={{ background: '#FDF0F0', borderLeft: '4px solid #C0392B', padding: '10px', borderRadius: '8px', marginBottom: '16px', color: '#C0392B', fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <AlertCircle size={16} />
+              <span>Erro ao gravar cadastro. Verifique a conexão e tente novamente.</span>
             </div>
           )}
 
-          <form onSubmit={handleSubmit}>
-            <div className="grid-2">
-              <div className="form-group">
-                <label htmlFor="nome">Nome Completo *</label>
-                <input
-                  id="nome"
-                  type="text"
-                  name="nome"
-                  className="form-control"
-                  placeholder="Ex: Ana Maria Silva"
-                  required
-                  value={formData.nome}
-                  onChange={handleChange}
-                />
-              </div>
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#362219', marginBottom: '4px' }}>
+                Nome Completo *
+              </label>
+              <input
+                type="text"
+                name="nome"
+                placeholder="Ex: Ana Maria Silva"
+                required
+                value={formData.nome}
+                onChange={handleChange}
+                style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1.5px solid #E8DCCF', fontSize: '0.9rem', color: '#362219', outline: 'none' }}
+              />
+            </div>
 
-              <div className="form-group">
-                <label htmlFor="email">E-mail de Contato *</label>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#362219', marginBottom: '4px' }}>
+                  E-mail *
+                </label>
                 <input
-                  id="email"
                   type="email"
                   name="email"
-                  className="form-control"
                   placeholder="ana@exemplo.com"
                   required
                   value={formData.email}
                   onChange={handleChange}
+                  style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1.5px solid #E8DCCF', fontSize: '0.9rem', color: '#362219', outline: 'none' }}
                 />
               </div>
-            </div>
 
-            <div className="grid-2">
-              <div className="form-group">
-                <label htmlFor="whatsapp">WhatsApp / Celular com DDD *</label>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#362219', marginBottom: '4px' }}>
+                  WhatsApp com DDD *
+                </label>
                 <input
-                  id="whatsapp"
                   type="tel"
                   name="whatsapp"
-                  className="form-control"
                   placeholder="(61) 99999-8888"
                   required
                   value={formData.whatsapp}
                   onChange={handleChange}
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="cidadeUf">Cidade / Estado onde reside</label>
-                <input
-                  id="cidadeUf"
-                  type="text"
-                  name="cidadeUf"
-                  className="form-control"
-                  placeholder="Ex: Brasília - DF"
-                  value={formData.cidadeUf}
-                  onChange={handleChange}
+                  style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1.5px solid #E8DCCF', fontSize: '0.9rem', color: '#362219', outline: 'none' }}
                 />
               </div>
             </div>
 
-            <div className="grid-2">
-              <div className="form-group">
-                <label htmlFor="areaInteresse">Área Principal de Habilidade</label>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#362219', marginBottom: '4px' }}>
+                Cidade / Estado onde reside
+              </label>
+              <input
+                type="text"
+                name="cidade"
+                placeholder="Ex: Brasília - DF"
+                value={formData.cidade}
+                onChange={handleChange}
+                style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1.5px solid #E8DCCF', fontSize: '0.9rem', color: '#362219', outline: 'none' }}
+              />
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#362219', marginBottom: '4px' }}>
+                  Área de Habilidade
+                </label>
                 <select
-                  id="areaInteresse"
-                  name="areaInteresse"
-                  className="form-control"
-                  value={formData.areaInteresse}
+                  name="habilidade"
+                  value={formData.habilidade}
                   onChange={handleChange}
+                  style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1.5px solid #E8DCCF', fontSize: '0.85rem', color: '#362219', outline: 'none', background: '#FFF' }}
                 >
-                  <option value="gis">Mapeamento GIS & Satélites (INPE / QGIS)</option>
+                  <option value="gis">Mapeamento GIS & Satélites</option>
                   <option value="midias">Comunicação e Redes Sociais</option>
                   <option value="design">Design Gráfico & Material Educativo</option>
-                  <option value="tech">Desenvolvimento Web / Suporte Técnico</option>
-                  <option value="captacao">Captação de Recursos & Logística</option>
+                  <option value="tech">Desenvolvimento Web / Suporte</option>
                 </select>
               </div>
 
-              <div className="form-group">
-                <label htmlFor="disponibilidade">Disponibilidade Semanal</label>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#362219', marginBottom: '4px' }}>
+                  Disponibilidade
+                </label>
                 <select
-                  id="disponibilidade"
                   name="disponibilidade"
-                  className="form-control"
                   value={formData.disponibilidade}
                   onChange={handleChange}
+                  style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1.5px solid #E8DCCF', fontSize: '0.85rem', color: '#362219', outline: 'none', background: '#FFF' }}
                 >
-                  <option value="pontual">Pontual (Horas flexíveis durante crises)</option>
-                  <option value="semanal">2 a 5 horas por semana</option>
-                  <option value="intensiva">Mais de 5 horas por semana</option>
+                  <option value="pontual">Pontual nas crises</option>
+                  <option value="semanal">2 a 5h por semana</option>
+                  <option value="intensiva">+ 5h por semana</option>
                 </select>
               </div>
             </div>
 
-            <div className="form-group">
-              <label htmlFor="mensagem">Como gostaria de contribuir? (Opcional)</label>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: '#362219', marginBottom: '4px' }}>
+                Como gostaria de contribuir? (Opcional)
+              </label>
               <textarea
-                id="mensagem"
                 name="mensagem"
-                className="form-control"
                 rows="3"
-                placeholder="Conte brevemente sobre sua experiência ou disponibilidade..."
+                placeholder="Conte brevemente sobre sua experiência..."
                 value={formData.mensagem}
                 onChange={handleChange}
+                style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1.5px solid #E8DCCF', fontSize: '0.85rem', color: '#362219', outline: 'none', resize: 'vertical' }}
               />
             </div>
 
             <button
               type="submit"
-              className="btn-apoiar"
               disabled={isLoading}
-              style={{ opacity: isLoading ? 0.7 : 1, width: '100%', marginTop: '8px', padding: '12px' }}
+              style={{
+                width: '100%',
+                background: '#8C4526',
+                color: '#FFFFFF',
+                padding: '12px',
+                borderRadius: '12px',
+                fontWeight: 800,
+                fontSize: '0.9rem',
+                border: 'none',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                opacity: isLoading ? 0.7 : 1
+
+              }}
             >
               {isLoading ? (
                 <>
-                  <Loader2 size={18} className="spin" /> Enviando via Webhook...
+                  <Loader2 size={18} className="spin" /> Gravando Cadastro...
                 </>
               ) : (
                 <>
@@ -212,3 +236,4 @@ export default function VolunteerFormView() {
     </div>
   );
 }
+

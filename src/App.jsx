@@ -11,7 +11,10 @@ import EducationView from './views/EducationView';
 import VolunteerFormView from './views/VolunteerFormView';
 import EmergencyView from './views/EmergencyView';
 
+import ProfileView from './views/ProfileView';
+
 export default function App() {
+
   const [currentPath, setCurrentPath] = useState(window.location.pathname || '/');
   const [selectedBrigade, setSelectedBrigade] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -157,7 +160,8 @@ export default function App() {
       case '/emergencia':
         return <EmergencyView onNavigate={navigateTo} />;
       case '/perfil':
-        return <VolunteerFormView />;
+        return <ProfileView onNavigate={navigateTo} />;
+
       case '/':
       default:
         return (
