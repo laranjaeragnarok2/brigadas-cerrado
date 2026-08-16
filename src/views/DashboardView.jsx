@@ -20,10 +20,16 @@ export default function DashboardView({ onNavigate, onOpenReportModal, community
             </div>
           </div>
         </div>
-        <button className="btn-alert-details" onClick={() => onNavigate('/brigadas')}>
-          Ver Detalhes
-        </button>
+        <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
+          <button className="btn-alert-details" style={{ flex: 1 }} onClick={() => onNavigate('/emergencia')}>
+            🚨 Ligar Emergência 193
+          </button>
+          <button className="btn-alert-details" style={{ flex: 1, background: 'rgba(255,255,255,0.15)', color: '#FFF' }} onClick={() => onNavigate('/brigadas')}>
+            Ver Detalhes
+          </button>
+        </div>
       </div>
+
 
       {/* Mapa de Satélite Interativo com Toggles no Canto Inferior Direito */}
       <div style={{ position: 'relative', marginBottom: '16px' }}>
