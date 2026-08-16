@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import InteractiveMap from '../components/InteractiveMap';
 import { Flame, Trees, Users, AlertCircle, History, Check, Navigation } from 'lucide-react';
 
-export default function DashboardView({ onNavigate, onOpenReportModal, communityReports = [] }) {
+export default function DashboardView({ onNavigate, onOpenReportModal, communityReports = [], onConfirmReport, confirmedReportIds = [] }) {
   const [mapToggle, setMapToggle] = useState('focos');
 
   return (
@@ -75,7 +75,7 @@ export default function DashboardView({ onNavigate, onOpenReportModal, community
           <div className="metric-icon-wrap">
             <Flame size={20} color="#C0392B" />
           </div>
-          <div className="metric-val-big">32</div>
+          <div className="metric-val-big">{communityReports.length > 0 ? communityReports.length * 4 + 10 : 32}</div>
           <div className="metric-label-sub">FOCOS ATIVOS</div>
         </div>
 
@@ -102,42 +102,55 @@ export default function DashboardView({ onNavigate, onOpenReportModal, community
         <History size={18} color="#735C50" />
       </div>
 
-      {/* Cards de Incidentes */}
-      <div className="incident-card-item">
-        <div className="incident-header-row">
-          <div className="incident-item-title">Fumaça em Pirenópolis</div>
-          <div className="incident-time">Há 5 min</div>
-        </div>
-        <div className="incident-desc">
-          Relato de coluna de fumaça densa avistada próximo à Serra dos Pireneus.
-        </div>
-        <div className="badge-confirmed">
-          <Check size={12} /> Confirmado (15)
-        </div>
-      </div>
+      {/* Cards de Incidentes Dinâmicos */}
+      {communityReports && communityReports.length > 0 ? (
+        communityReports.map((rep) => {
+          const isConfirmed = confirmedReportIds.includes(rep.id);
 
-      <div className="incident-card-item">
-        <div className="incident-header-row">
-          <div className="incident-item-title">Foco Extinto - Cavalcante</div>
-          <div className="incident-time">Há 45 min</div>
-        </div>
-        <div className="incident-desc">
-          Brigada Kalunga reportou extinção total do foco na região do Vão de Almas.
-        </div>
-        <div className="badge-resolved">
-          Resolvido
-        </div>
-      </div>
+          return (
+            <div key={rep.id} className="incident-card-item">
+              <div className="incident-header-row">
+                <div className="incident-item-title">{rep.title}</div>
+                <div className="incident-time">{rep.time || 'Recente'}</div>
+              </div>
+              <div style={{ fontSize: '0.78rem', color: '#8C4526', fontWeight: 700, marginBottom: '4px' }}>
+                📍 {rep.location}
+              </div>
+              <div className="incident-desc">
+                {rep.description || 'Alerta transmitido via aplicativo.'}
+              </div>
 
-      <div className="incident-card-item">
-        <div className="incident-header-row">
-          <div className="incident-item-title">Suspeita de Fogo - Alto Paraíso</div>
-          <div className="incident-time">Há 1h</div>
+              {rep.photo && (
+                <img
+                  src={rep.photo}
+                  alt="Evidência"
+                  style={{ width: '100%', maxHeight: '140px', objectFit: 'cover', borderRadius: '8px', marginBottom: '8px' }}
+                />
+              )}
+
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '6px' }}>
+                {rep.type === 'success' ? (
+                  <div className="badge-resolved">
+                    Resolvido
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => onConfirmReport && onConfirmReport(rep.id)}
+                    className="badge-confirmed"
+                    style={{ border: 'none', cursor: 'pointer', opacity: isConfirmed ? 1 : 0.85 }}
+                  >
+                    <Check size={12} /> {isConfirmed ? 'Você confirmou' : 'Confirmar'} ({rep.confirmations || 1})
+                  </button>
+                )}
+              </div>
+            </div>
+          );
+        })
+      ) : (
+        <div style={{ textAlign: 'center', padding: '24px', color: '#735C50', fontSize: '0.88rem' }}>
+          Nenhum incidente registrado no momento.
         </div>
-        <div className="incident-desc">
-          Turistas relataram cheiro forte de queimado na trilha dos Saltos.
-        </div>
-      </div>
+      )}
 
       {/* Botão Flutuante FAB para Marcador no Mapa / Relato */}
       <button className="fab-pin-btn" onClick={onOpenReportModal} aria-label="Abrir Novo Relato">
@@ -146,4 +159,5 @@ export default function DashboardView({ onNavigate, onOpenReportModal, community
     </div>
   );
 }
+
 
