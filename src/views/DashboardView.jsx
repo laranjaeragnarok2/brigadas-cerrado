@@ -25,19 +25,20 @@ export default function DashboardView({ onNavigate, onOpenReportModal, community
         </button>
       </div>
 
-      {/* Mapa de Satélite Interativo com Toggles Superiores */}
+      {/* Mapa de Satélite Interativo com Toggles no Canto Inferior Direito */}
       <div style={{ position: 'relative', marginBottom: '16px' }}>
-        <div style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 1000, display: 'flex', gap: '6px' }}>
+        <div style={{ position: 'absolute', bottom: '10px', right: '10px', zIndex: 1000, display: 'flex', gap: '6px' }}>
           <button
             onClick={() => setMapToggle('focos')}
             style={{
-              background: mapToggle === 'focos' ? '#FFFFFF' : 'rgba(255, 255, 255, 0.85)',
+              background: mapToggle === 'focos' ? '#FFFFFF' : 'rgba(255, 255, 255, 0.9)',
               color: mapToggle === 'focos' ? '#362219' : '#735C50',
               fontWeight: 800,
               fontSize: '0.72rem',
-              padding: '4px 10px',
+              padding: '6px 12px',
               borderRadius: 'var(--radius-pill)',
               border: '1px solid #E8DCCF',
+              boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
@@ -49,13 +50,14 @@ export default function DashboardView({ onNavigate, onOpenReportModal, community
           <button
             onClick={() => setMapToggle('seguras')}
             style={{
-              background: mapToggle === 'seguras' ? '#FFFFFF' : 'rgba(255, 255, 255, 0.85)',
+              background: mapToggle === 'seguras' ? '#FFFFFF' : 'rgba(255, 255, 255, 0.9)',
               color: mapToggle === 'seguras' ? '#362219' : '#735C50',
               fontWeight: 800,
               fontSize: '0.72rem',
-              padding: '4px 10px',
+              padding: '6px 12px',
               borderRadius: 'var(--radius-pill)',
               border: '1px solid #E8DCCF',
+              boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
@@ -68,6 +70,7 @@ export default function DashboardView({ onNavigate, onOpenReportModal, community
 
         <InteractiveMap reports={communityReports} />
       </div>
+
 
       {/* Grid de 3 Cards de Métricas */}
       <div className="metrics-3grid">
