@@ -84,11 +84,17 @@ export default function InteractiveMap({ reports = [], onSelectLocation, isPickM
         style={{ width: '100%', height: '100%', zIndex: 1 }}
         scrollWheelZoom={false}
       >
-        {/* Mapa Base: Esri World Imagery (Satélite Real) */}
+        {/* Mapa Base: Esri World Imagery (Satélite Real Alta Resolução) */}
         <TileLayer
           attribution='&copy; <a href="https://www.esri.com/">Esri World Imagery</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
         />
+
+        {/* Camada Vetorial de Divisas, Estradas e Nomes de Cidades (Estilo GeaMap GIS Pro) */}
+        <TileLayer
+          url="https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}"
+        />
+
 
         {/* Camada WMS do GeoServer INPE TerraBrasilis para Bioma Cerrado */}
         <WMSTileLayer
