@@ -76,6 +76,16 @@ export default function InteractiveMap({ reports = [], onSelectLocation, isPickM
   };
 
 
+  const defaultGoiásFocos = [
+    { id: 'f_go_1', type: 'danger', title: 'Foco em Encosta de Serra', location: 'Alto Paraíso de Goiás (GO-237 km 14)', coords: '-14.1311, -47.5218', description: 'Chamas avançando na vegetação alta.', confirmations: 12 },
+    { id: 'f_go_2', type: 'warning', title: 'Coluna de Fumaça Branca', location: 'Cavalcante - Limite Quilombo Kalunga', coords: '-13.7964, -47.4583', description: 'Fumaça espessa avistada do vale.', confirmations: 8 },
+    { id: 'f_go_3', type: 'danger', title: 'Incêndio Florestal em Serra', location: 'Pirenópolis - Parque dos Pyreneus', coords: '-15.8504, -48.9583', description: 'Foco ativo próximo à divisa do parque.', confirmations: 15 },
+    { id: 'f_go_4', type: 'warning', title: 'Alerta Preventivo de Queimada', location: 'Mineiros - Parque Nacional das Emas', coords: '-17.5683, -52.5511', description: 'Rondas de monitoramento no perímetro.', confirmations: 5 },
+    { id: 'f_go_5', type: 'danger', title: 'Foco de Calor em Vereda', location: 'Mambaí - Nordeste Goiano', coords: '-14.4842, -46.1114', description: 'Moradores relataram início de foco.', confirmations: 9 }
+  ];
+
+  const mapReports = (reports && reports.length > 0) ? reports : defaultGoiásFocos;
+
   return (
     <div style={{ width: '100%', height: '280px', borderRadius: '16px', overflow: 'hidden', border: '1.5px solid #E8DCCF', position: 'relative', zIndex: 1, isolation: 'isolate' }}>
       <MapContainer
@@ -94,7 +104,6 @@ export default function InteractiveMap({ reports = [], onSelectLocation, isPickM
         <TileLayer
           url="https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}"
         />
-
 
         {/* Camada WMS do GeoServer INPE TerraBrasilis para Bioma Cerrado */}
         <WMSTileLayer
@@ -116,11 +125,10 @@ export default function InteractiveMap({ reports = [], onSelectLocation, isPickM
           attribution="CENSIPAM / Painel do Fogo"
         />
 
-
         {isPickMode && <LocationPicker onSelectLocation={onSelectLocation} />}
 
         {/* Renderiza marcadores dos relatos */}
-        {reports.map((rep, idx) => {
+        {mapReports.map((rep, idx) => {
           const pos = getCoordsForReport(rep, idx);
           const icon = rep.type === 'danger' ? fireIcon : rep.type === 'warning' ? smokeIcon : safeIcon;
 
@@ -141,7 +149,7 @@ export default function InteractiveMap({ reports = [], onSelectLocation, isPickM
                     <img src={rep.photo} alt="Foto" style={{ width: '100%', height: '80px', objectFit: 'cover', borderRadius: '4px', marginTop: '4px' }} />
                   )}
                   <div style={{ fontSize: '0.75rem', color: '#27AE60', fontWeight: 'bold', marginTop: '6px' }}>
-                    👍 Confirmado por {rep.confirmations} moradores
+                    👍 Confirmado por {rep.confirmations || 1} moradores
                   </div>
                 </div>
               </Popup>
@@ -149,6 +157,7 @@ export default function InteractiveMap({ reports = [], onSelectLocation, isPickM
           );
         })}
       </MapContainer>
+
 
       {isPickMode && (
         <div style={{ position: 'absolute', bottom: '10px', left: '10px', zIndex: 1000, background: 'rgba(38,25,20,0.85)', color: '#FFF', padding: '6px 12px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 'bold' }}>
