@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+
 import { X, Flame, Cloud, Droplet, Navigation, Camera, Phone, Send, CheckCircle2 } from 'lucide-react';
 
 export default function ReportFireModal({ isOpen, onClose, onAddReport }) {
@@ -12,6 +13,12 @@ export default function ReportFireModal({ isOpen, onClose, onAddReport }) {
 
   if (!isOpen) return null;
 
+  useEffect(() => {
+    if (isOpen) {
+      handleGetGps();
+    }
+  }, [isOpen]);
+
   const handleGetGps = () => {
     setIsGettingGps(true);
     if ('geolocation' in navigator) {
@@ -23,15 +30,17 @@ export default function ReportFireModal({ isOpen, onClose, onAddReport }) {
           });
           setIsGettingGps(false);
         },
-        () => {
+        (err) => {
+          console.warn("Permissão de GPS negada ou indisponível:", err);
           setIsGettingGps(false);
         },
-        { timeout: 5000 }
+        { enableHighAccuracy: true, timeout: 8000 }
       );
     } else {
       setIsGettingGps(false);
     }
   };
+
 
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
